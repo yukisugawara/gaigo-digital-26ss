@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>第1回 導入：デジタルツール活用の下準備 | 人文学とデジタル技術（2026）</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800;900&family=Noto+Sans+JP:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"M PLUS Rounded 1c"', '"Noto Sans JP"', 'sans-serif'],
+          },
+        },
+      },
+    }
+  </script>
+  <style>
+    * { font-family: 'M PLUS Rounded 1c', 'Noto Sans JP', sans-serif; }
+    .gradient-bg {
+      background: linear-gradient(-45deg, #fdf2f8, #ede9fe, #fff7ed, #e0f2fe, #fce7f3, #f5f3ff);
+      background-size: 400% 400%;
+      animation: gradientShift 20s ease infinite;
+    }
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    .glass {
+      background: rgba(255, 255, 255, 0.55);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04), inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+    }
+    .glass-strong {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(32px) saturate(200%);
+      -webkit-backdrop-filter: blur(32px) saturate(200%);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+    }
+    .gradient-text {
+      background: linear-gradient(135deg, #8b5cf6, #ec4899, #f97316, #06b6d4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .fade-in {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(100px);
+      opacity: 0.5;
+      animation: blobFloat 8s ease-in-out infinite;
+    }
+    @keyframes blobFloat {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(30px, -30px) scale(1.1); }
+      66% { transform: translate(-20px, 20px) scale(0.9); }
+    }
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(139, 92, 246, 0.3); border-radius: 4px; }
+    .pill {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .topic-card {
+      transition: all 0.3s ease;
+    }
+    .topic-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px -8px rgba(192, 132, 252, 0.12);
+    }
+    html { scroll-behavior: smooth; }
+    .info-box {
+      background: rgba(255, 255, 255, 0.5);
+      border-radius: 1rem;
+      padding: 1rem 1.25rem;
+    }
+    code {
+      background: rgba(139, 92, 246, 0.08);
+      padding: 0.15rem 0.4rem;
+      border-radius: 0.375rem;
+      font-size: 0.8em;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      color: #8b5cf6;
+    }
+  
+    .attendance-card {
+      background: linear-gradient(135deg, rgba(243,232,255,0.9), rgba(252,231,243,0.9), rgba(254,242,232,0.9));
+      backdrop-filter: blur(30px);
+      -webkit-backdrop-filter: blur(30px);
+      border: 1px solid rgba(216,180,254,0.4);
+      box-shadow: 0 8px 32px rgba(168,85,247,0.08);
+    }
+  </style>
+</head>
+<body class="gradient-bg min-h-screen relative overflow-x-hidden">
+  <!-- Password Gate -->
+  <div id="password-gate" style="display:none; position:fixed; inset:0; z-index:99999; background:linear-gradient(-45deg,#fdf2f8,#ede9fe,#fff7ed,#e0f2fe); display:flex; align-items:center; justify-content:center;">
+    <div style="background:rgba(255,255,255,0.85); backdrop-filter:blur(24px); border-radius:1.5rem; padding:2.5rem; max-width:360px; width:90%; text-align:center; box-shadow:0 8px 32px rgba(0,0,0,0.08);">
+      <p style="font-size:2rem; margin-bottom:0.5rem;">🔒</p>
+      <h2 style="font-weight:800; font-size:1.2rem; color:#1f2937; margin-bottom:0.5rem;">パスワードを入力してください</h2>
+      <p style="font-size:0.75rem; color:#9ca3af; margin-bottom:1.5rem;">このページは受講者限定です</p>
+      <input id="pw-input" type="password" placeholder="パスワード" style="width:100%; padding:0.7rem 1rem; border-radius:0.75rem; border:1px solid #e5e7eb; font-size:0.9rem; outline:none; margin-bottom:0.75rem;" onkeydown="if(event.key==='Enter')checkPw()">
+      <button onclick="checkPw()" style="width:100%; padding:0.7rem; border-radius:0.75rem; background:linear-gradient(135deg,#8b5cf6,#ec4899); color:white; font-weight:700; font-size:0.9rem; border:none; cursor:pointer;">入る</button>
+      <p id="pw-error" style="color:#ef4444; font-size:0.75rem; margin-top:0.5rem; display:none;">パスワードが違います</p>
+    </div>
+  </div>
+  <script>
+    function checkPw() {
+      if (document.getElementById('pw-input').value === 'repair') {
+        sessionStorage.setItem('hdt_auth', '1');
+        document.getElementById('password-gate').style.display = 'none';
+      } else {
+        document.getElementById('pw-error').style.display = 'block';
+      }
+    }
+    if (sessionStorage.getItem('hdt_auth') !== '1') {
+      document.getElementById('password-gate').style.display = 'flex';
+    } else {
+      document.getElementById('password-gate').style.display = 'none';
+    }
+  </script>
+
+  <div class="blob w-96 h-96 bg-violet-300 top-20 -left-48 fixed" style="animation-delay: 0s;"></div>
+  <div class="blob w-80 h-80 bg-pink-300 top-1/2 -right-40 fixed" style="animation-delay: 2s;"></div>
+  <div class="blob w-72 h-72 bg-amber-200 bottom-20 left-1/3 fixed" style="animation-delay: 4s;"></div>
+
+  <!-- Navigation -->
+  <nav class="fixed top-0 left-0 right-0 z-50 glass-strong">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+      <a href="../" class="flex items-center gap-2 text-gray-800 font-bold text-sm sm:text-base hover:text-violet-500 transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+        </svg>
+        人文学とデジタル技術
+      </a>
+      <div class="flex items-center gap-3 sm:gap-6 text-sm font-medium text-gray-600">
+        <a href="../#sessions" class="hover:text-violet-500 transition-colors hidden sm:block">授業一覧</a>
+        <a href="2.html" class="bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white px-4 py-2 rounded-full text-xs sm:text-sm font-semibold hover:shadow-lg hover:shadow-violet-200 transition-all">次の授業 →</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="relative pt-32 pb-16 px-4 sm:px-6">
+    <div class="max-w-4xl mx-auto text-center">
+      <div class="fade-in">
+        <span class="pill bg-violet-100 text-violet-600 mb-4 inline-block">導入</span>
+        <div class="flex items-center justify-center gap-3 mb-4">
+          <span class="text-6xl sm:text-7xl font-black text-violet-200">01</span>
+        </div>
+        <h1 class="text-2xl sm:text-3xl md:text-4xl font-black leading-tight mb-4">
+          <span class="gradient-text">導入：デジタルツール活用の下準備</span>
+        </h1>
+        <p class="text-base sm:text-lg text-gray-500 font-light">第1回　人文学とデジタル技術（2026）</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- 本章の到達点 -->
+  <section class="max-w-4xl mx-auto px-4 sm:px-6 mb-10">
+    <div class="fade-in glass rounded-3xl p-6 sm:p-8 border-l-4 border-violet-400">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-10 h-10 bg-violet-100 rounded-xl flex items-center justify-center text-xl">🎯</div>
+        <h2 class="font-bold text-lg text-gray-800">本章の到達点</h2>
+      </div>
+      <ul class="space-y-2 text-sm text-gray-600">
+        <li class="flex items-start gap-2"><span class="text-pink-400 mt-0.5">&#9679;</span><span>本授業の全体像（目的・流れ）</span></li>
+        <li class="flex items-start gap-2"><span class="text-pink-400 mt-0.5">&#9679;</span><span>学習環境の準備（PC／アカウント／作業場所）</span></li>
+        <li class="flex items-start gap-2"><span class="text-pink-400 mt-0.5">&#9679;</span><span>Notion 基本操作（ページ構造・ブロック・共有・テンプレート）</span></li>
+        <li class="flex items-start gap-2"><span class="text-pink-400 mt-0.5">&#9679;</span><span>入力効率化の基礎（Markdown 記法／ショートカット／タイピング練習）</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 1.1 この章の位置づけ -->
+  <section class="max-w-4xl mx-auto px-4 sm:px-6 mb-8">
+    <div class="fade-in text-center mb-8">
+      <h2 class="text-2xl sm:text-3xl font-black text-gray-800 mb-2">内容</h2>
+    </div>
+
+    <div class="fade-in topic-card glass rounded-2xl p-6 mb-5">
+      <div class="flex items-start gap-4">
+        <div class="w-10 h-10 bg-gradient-to-br from-violet-500 to-fuchsia-500 rounded-xl flex items-center justify-center text-white text-sm font-black flex-shrink-0">1.1</div>
+        <div>
+          <h3 class="font-bold text-gray-800 mb-2">この章の位置づけ</h3>
+          <p class="text-sm text-gray-600 leading-relaxed mb-3">
+            この章は、内容の学習というより、<strong class="text-gray-800">研究活動を進める状態をつくる</strong>ための準備の章です。研究は「ひらめき」だけでは進まず、日々の小さな作業が積み上がって前に進みます。その小さな作業を支えるのが、学習環境と運用ルールです。
+          </p>
+          <p class="text-sm text-gray-600 leading-relaxed">
+            この手引きでは、毎回さまざまなツールを扱います。しかし、ツールの操作だけを覚えても、研究生活の中に定着しないと意味がありません。そこで最初に、<strong class="text-gray-800">何のために／どう進めるか／どう評価されるか</strong>を整理し、安心して動き出せる状態を整えます。
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 1.2 本授業の目的 -->
+    <div class="fade-in topic-card glass rounded-2xl p-6 mb-5">
+      <div class="flex items-start gap-4">
+        <div class="w-10 h-10 bg-gradient-to-br from-violet-500 to-fuchsia-500 rounded-xl flex items-center justify-center text-white text-sm font-black flex-shrink-0">1.2</div>
+        <div>
+          <h3 class="font-bold text-gray-800 mb-2">本授業の目的</h3>
+          <p class="text-sm text-gray-600 leading-relaxed mb-3">
+            本授業の目的は、人文学研究における「調査・読解・思考・執筆・発信」という研究活動の流れを、デジタル技術を用いて<strong class="text-gray-800">設計し、運用し、発展させる</strong>ことを体系的に学ぶことです。単なるツールの操作習得に留まらず、研究目的や関心に応じてツールを選択し、組み合わせ、研究プロセスの中に位置づける判断力を養います。
+          </p>
+          <div class="info-box">
+            <p class="text-sm text-gray-600 leading-relaxed">
+              ここで重要なのは、研究の中心はあくまで<strong class="text-gray-800">人間の頭と手</strong>にある、という前提です。ツールは研究を「代行」するものではなく、研究を<strong class="text-gray-800">継続可能にするための足場</strong>です。
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 1.3 学習環境の準備 -->
+    <div class="fade-in topic-card glass rounded-2xl p-6 mb-5">
+      <div class="flex items-start gap-4">
+        <div class="w-10 h-10 bg-gradient-to-br from-violet-500 to-fuchsia-500 rounded-xl flex items-center justify-center text-white text-sm font-black flex-shrink-0">1.3</div>
+        <div>
+          <h3 class="font-bold text-gray-800 mb-2">学習環境の準備</h3>
+          <p class="text-sm text-gray-600 leading-relaxed mb-3">
+            この手引きは、スマートフォンだけでも「読む」ことはできますが、作業の多くはPCのほうが安定します。特にNotionや各種ツールは、キーボードと大きい画面があると作業効率が大きく変わります。
+          </p>
+          <div class="info-box">
+            <p class="text-xs font-bold text-gray-700 mb-2">必要なもの</p>
+            <ul class="space-y-1.5 text-sm text-gray-600">
+              <li class="flex items-start gap-2"><span class="text-pink-400 mt-0.5">&#9679;</span><span><strong class="text-gray-700">PC</strong>（推奨：ノートPCでも可）</span></li>
+              <li class="flex items-start gap-2"><span class="text-pink-400 mt-0.5">&#9679;</span><span><strong class="text-gray-700">安定したネット環境</strong></span></li>
+              <li class="flex items-start gap-2"><span class="text-pink-400 mt-0.5">&#9679;</span><span><strong class="text-gray-700">メールアドレス</strong>（各種サービス登録用）</span></li>
+              <li class="flex items-start gap-2"><span class="text-pink-400 mt-0.5">&#9679;</span><span><strong class="text-gray-700">ブラウザ</strong>（Chrome / Edge / Firefox 等）</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 1.4 Notion 基本操作 -->
+    <div class="fade-in topic-card glass rounded-2xl p-6 mb-5">
+      <div class="flex items-start gap-4">
+        <div class="w-10 h-10 bg-gradient-to-br from-violet-500 to-fuchsia-500 rounded-xl flex items-center justify-center text-white text-sm font-black flex-shrink-0">1.4</div>
+        <div class="w-full">
+          <h3 class="font-bold text-gray-800 mb-2">Notion 基本操作</h3>
+          <p class="text-sm text-gray-600 leading-relaxed mb-4">
+            Notionは「ページ」と「ブロック」でできています。この二つがNotionの特色で、その点について理解しておくと、Notionの操作の大半は解決します。
+          </p>
+
+          <!-- アカウント作成と初期設定 -->
+          <div class="info-box mb-4">
+            <p class="text-xs font-bold text-gray-700 mb-2">1.4.1 アカウント作成と初期設定</p>
+            <p class="text-sm text-gray-600 mb-2">Notionのアカウントを作成し、ログインできる状態にします。学内メールが使える場合は、学内メールで作ると後々楽なことが多いです。</p>
+            <p class="text-xs font-bold text-gray-500 mb-1">初期設定の優先順位</p>
+            <ol class="text-sm text-gray-600 space-y-1 list-decimal list-inside">
+              <li>使う端末の決定（PC中心）</li>
+              <li>同期の確認（ログインした端末間で同じ内容が見えるか）</li>
+              <li>通知の整理（必要な通知だけ残す）</li>
+            </ol>
+          </div>
+
+          <!-- ページ構造 -->
+          <div class="info-box mb-4">
+            <p class="text-xs font-bold text-gray-700 mb-2">1.4.2 ページ構造</p>
+            <p class="text-sm text-gray-600 mb-2">ページは入れ物で、入れ子にできます。おすすめは、まず「玄関」を作ることです。最初から完璧に分けなくて大丈夫ですが、<strong class="text-gray-700">「投げ込み場所」だけは先に作る</strong>と、詰まりにくくなります。</p>
+            <p class="text-xs font-bold text-gray-500 mb-1">玄関ページ（例）</p>
+            <ul class="text-sm text-gray-600 space-y-1">
+              <li class="flex items-start gap-2"><span class="text-pink-400 mt-0.5">&#9679;</span>Inbox（思いつきの投げ込み）</li>
+              <li class="flex items-start gap-2"><span class="text-pink-400 mt-0.5">&#9679;</span>授業ノート（各回のメモと提出物）</li>
+              <li class="flex items-start gap-2"><span class="text-pink-400 mt-0.5">&#9679;</span>研究プロジェクト（自分のテーマに関するノート）</li>
+              <li class="flex items-start gap-2"><span class="text-pink-400 mt-0.5">&#9679;</span>文献メモ（読む／読んだ記録）</li>
+              <li class="flex items-start gap-2"><span class="text-pink-400 mt-0.5">&#9679;</span>タスク（やることの一覧）</li>
+              <li class="flex items-start gap-2"><span class="text-pink-400 mt-0.5">&#9679;</span>目標管理</li>
+            </ul>
+          </div>
+
+          <!-- ブロック -->
+          <div class="info-box mb-4">
+            <p class="text-xs font-bold text-gray-700 mb-2">1.4.3 ブロック</p>
+            <p class="text-sm text-gray-600 mb-2">Notionの1行1行はブロックです。段落、見出し、箇条書き、チェックボックス、画像、表など、ほとんど全部がブロックとして扱われます。操作の近道はスラッシュ（<code>/</code>）です。<code>/</code> を打つと部品一覧が出るので、そこで選ぶだけで形が作れます。</p>
+            <p class="text-xs font-bold text-gray-500 mb-1">よく使うブロック</p>
+            <div class="grid grid-cols-2 gap-1 text-xs text-gray-500">
+              <span>見出し（<code>/h1</code>, <code>/h2</code>, <code>/h3</code>）</span>
+              <span>箇条書き（<code>/bulleted list</code>）</span>
+              <span>番号付きリスト（<code>/numbered list</code>）</span>
+              <span>To-do（<code>/to-do</code>）</span>
+              <span>目次（<code>/toc</code>）</span>
+              <span>引用（<code>/quote</code>）</span>
+              <span>コード（<code>/code</code>）</span>
+              <span>コールアウト（<code>/callout</code>）</span>
+            </div>
+          </div>
+
+          <!-- 共有 -->
+          <div class="info-box mb-4">
+            <p class="text-xs font-bold text-gray-700 mb-2">1.4.4 共有</p>
+            <p class="text-sm text-gray-600 mb-2">Notionの共有は便利ですが、設定が複数あります。ここで混乱しやすいのは「リンク共有」と「Web公開」の違いです。</p>
+            <ul class="text-sm text-gray-600 space-y-1">
+              <li class="flex items-start gap-2"><span class="text-pink-400 mt-0.5">&#9679;</span><strong class="text-gray-700">リンク共有</strong>：リンクを知っている人がアクセス</li>
+              <li class="flex items-start gap-2"><span class="text-pink-400 mt-0.5">&#9679;</span><strong class="text-gray-700">Web公開</strong>：Webページとして公開（不特定多数の閲覧が起こりうる）</li>
+              <li class="flex items-start gap-2"><span class="text-pink-400 mt-0.5">&#9679;</span><strong class="text-gray-700">検索公開</strong>：検索エンジンに載る可能性</li>
+            </ul>
+            <p class="text-xs text-gray-500 mt-2">限定共有が目的なら、基本は<strong class="text-gray-600">検索公開はオフ</strong>です。編集権限やコメント権限も必要最小限にします。</p>
+          </div>
+
+          <!-- テンプレート -->
+          <div class="info-box">
+            <p class="text-xs font-bold text-gray-700 mb-2">1.4.5 テンプレート</p>
+            <p class="text-sm text-gray-600">
+              テンプレートは「毎回の型」です。型は窮屈に見えますが、実は自由を生みます。毎回ゼロから書く負担が減ると、内容（考える部分）に集中できます。他のユーザーが作った完成度の高いテンプレートを使うこともできます。
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 1.5 入力効率化 -->
+    <div class="fade-in topic-card glass rounded-2xl p-6 mb-5">
+      <div class="flex items-start gap-4">
+        <div class="w-10 h-10 bg-gradient-to-br from-violet-500 to-fuchsia-500 rounded-xl flex items-center justify-center text-white text-sm font-black flex-shrink-0">1.5</div>
+        <div class="w-full">
+          <h3 class="font-bold text-gray-800 mb-2">入力効率化</h3>
+          <p class="text-sm text-gray-600 leading-relaxed mb-4">
+            入力効率化は、速さ自慢のためではありません。研究の集中は「中断」で崩れます。タイプミスやフォーマットの崩れは、全部「中断」になります。小さな中断を減らすと、<strong class="text-gray-800">思考の連続性が守られます</strong>。
+          </p>
+
+          <!-- Markdown記法 -->
+          <div class="info-box mb-4">
+            <p class="text-xs font-bold text-gray-700 mb-2">1.5.1 Markdown 記法</p>
+            <p class="text-sm text-gray-600 mb-3">NotionはMarkdown記法に対応しています。全部覚える必要はありませんが、次のあたりは頻出です。Markdown記法を覚えると、<strong class="text-gray-700">構造化した文章を高速で作成</strong>できるようになります。</p>
+            <div class="bg-gray-800 rounded-xl p-4 text-xs text-gray-200 font-mono space-y-1 leading-relaxed">
+              <p><span class="text-sky-400">#</span> 見出し1</p>
+              <p><span class="text-sky-400">##</span> 見出し2</p>
+              <p><span class="text-sky-400">###</span> 見出し3</p>
+              <p class="mt-2"><span class="text-sky-400">-</span> 箇条書き</p>
+              <p><span class="text-sky-400">1.</span> 番号付き</p>
+              <p class="mt-2"><span class="text-sky-400">- [ ]</span> To-do（チェックボックス）</p>
+              <p class="mt-2"><span class="text-sky-400">**</span>太字<span class="text-sky-400">**</span></p>
+              <p><span class="text-sky-400">*</span>斜体<span class="text-sky-400">*</span></p>
+              <p><span class="text-sky-400">`</span>コード<span class="text-sky-400">`</span></p>
+              <p><span class="text-sky-400">></span> 引用（引用ブロック）</p>
+            </div>
+            <p class="text-xs text-gray-500 mt-2">Markdownは「見た目」だけでなく、<strong class="text-gray-600">構造を作る</strong>のに役立ちます。見出しが整うと、後から読み返すときに迷いません。</p>
+          </div>
+
+          <!-- ショートカット -->
+          <div class="info-box">
+            <p class="text-xs font-bold text-gray-700 mb-2">1.5.2 ショートカット</p>
+            <p class="text-sm text-gray-600 mb-3">覚えた分だけ作業スピードが上がります。ただし、最初の段階で全部覚える必要はありません。まずは以下のショートカットだけで十分です。</p>
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm text-left">
+                <thead>
+                  <tr class="border-b border-gray-200">
+                    <th class="py-2 pr-4 text-xs font-bold text-gray-500">操作</th>
+                    <th class="py-2 text-xs font-bold text-gray-500">ショートカット</th>
+                  </tr>
+                </thead>
+                <tbody class="text-gray-600">
+                  <tr class="border-b border-gray-100"><td class="py-2 pr-4">太字</td><td class="py-2 font-mono text-xs text-violet-500">Ctrl/Cmd + B</td></tr>
+                  <tr class="border-b border-gray-100"><td class="py-2 pr-4">斜体</td><td class="py-2 font-mono text-xs text-violet-500">Ctrl/Cmd + I</td></tr>
+                  <tr class="border-b border-gray-100"><td class="py-2 pr-4">下線</td><td class="py-2 font-mono text-xs text-violet-500">Ctrl/Cmd + U</td></tr>
+                  <tr><td class="py-2 pr-4">元に戻す</td><td class="py-2 font-mono text-xs text-violet-500">Ctrl/Cmd + Z</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 1.6 タイピング練習 -->
+    <div class="fade-in topic-card glass rounded-2xl p-6 mb-5">
+      <div class="flex items-start gap-4">
+        <div class="w-10 h-10 bg-gradient-to-br from-violet-500 to-fuchsia-500 rounded-xl flex items-center justify-center text-white text-sm font-black flex-shrink-0">1.6</div>
+        <div class="w-full">
+          <h3 class="font-bold text-gray-800 mb-2">タイピング練習</h3>
+          <p class="text-sm text-gray-600 leading-relaxed mb-4">
+            タイピングは、研究における「筆圧」に近い基礎体力です。文章を書く量が増えるほど、タイピングの差は積み上がって効いてきます。
+          </p>
+
+          <div class="info-box mb-4">
+            <p class="text-sm text-gray-600 mb-2">
+              本授業では、無料で遊べるタイピング・ゲーム<strong class="text-gray-700">寿司打</strong>（<a href="https://sushida.net" target="_blank" class="text-violet-400 hover:underline">sushida.net</a>）での練習をお勧めします。
+            </p>
+            <p class="text-sm text-gray-600">
+              具体的な目標として、寿司打の<strong class="text-gray-700">「高級 1万円コース」</strong>（文字数が9から14文字以上、制限時間120秒）の「普通モード」を「お釣りあり」でクリアすることを設定します。目標が明確であれば、練習が習慣化しやすいからです。
+            </p>
+          </div>
+
+          <!-- 練習の考え方 -->
+          <div class="info-box mb-4">
+            <p class="text-xs font-bold text-gray-700 mb-2">練習の考え方</p>
+            <p class="text-sm text-gray-600 mb-2">おすすめは「短く、頻繁に」です。一気に30分やるより、5分を毎日やるほうが伸びやすいです。</p>
+            <ul class="text-sm text-gray-600 space-y-1">
+              <li class="flex items-start gap-2"><span class="text-pink-400 mt-0.5">&#9679;</span>週5日：5分〜10分</li>
+              <li class="flex items-start gap-2"><span class="text-pink-400 mt-0.5">&#9679;</span>週1回：寿司打1万円コース（記録更新を狙う）</li>
+            </ul>
+          </div>
+
+          <!-- 伸びやすいポイント -->
+          <div class="info-box mb-4">
+            <p class="text-xs font-bold text-gray-700 mb-2">伸びやすいポイント</p>
+            <p class="text-sm text-gray-600 mb-2">タイピングが伸びないときは、気合よりフォームが効きます。</p>
+            <ul class="text-sm text-gray-600 space-y-1.5">
+              <li class="flex items-start gap-2"><span class="text-pink-400 mt-0.5">&#9679;</span>
+                <span>キーボードには「ホームポジション」と呼ばれる基本の指位置があります。左手の人差し指を <strong class="inline-block px-2 py-0.5 bg-gray-100 rounded text-gray-800 font-mono">F</strong>、右手の人差し指を <strong class="inline-block px-2 py-0.5 bg-gray-100 rounded text-gray-800 font-mono">J</strong> に置きましょう。この2つのキーには小さな突起があり、見なくても位置が分かります。</span>
+              </li>
+              <li class="flex items-start gap-2"><span class="text-pink-400 mt-0.5">&#9679;</span><strong class="text-gray-700">画面を見て打ちましょう</strong>（キーボードを見ない）</li>
+              <li class="flex items-start gap-2"><span class="text-pink-400 mt-0.5">&#9679;</span>ミスしても慌てないでください（ミス後の立て直しが速さ）</li>
+            </ul>
+          </div>
+
+          <!-- キーボードを身体化する -->
+          <div class="info-box">
+            <p class="text-xs font-bold text-gray-700 mb-2">キーボードを身体化する</p>
+            <p class="text-sm text-gray-600">
+              自分のコンピュータのキーボード表を印刷して、目に見えるところに貼っておきましょう。特に、記号の位置を頭と身体で覚えましょう。自分のお気に入りのキーボードを見つけるのも良いと思います。
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- チェックポイント -->
+  <section class="max-w-4xl mx-auto px-4 sm:px-6 mb-12">
+    <div class="fade-in glass-strong rounded-3xl p-6 sm:p-8 border-l-4 border-violet-400">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-10 h-10 bg-violet-100 rounded-xl flex items-center justify-center text-xl">📝</div>
+        <h2 class="font-bold text-lg text-gray-800">授業時間外学習（チェックポイント）</h2>
+      </div>
+      <ul class="space-y-3 text-sm text-gray-600">
+        <li class="flex items-start gap-2">
+          <span class="w-5 h-5 bg-violet-100 rounded-full flex items-center justify-center text-violet-500 text-xs flex-shrink-0 mt-0.5">1</span>
+          <span>シラバス・評価基準を確認する</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <span class="w-5 h-5 bg-violet-100 rounded-full flex items-center justify-center text-violet-500 text-xs flex-shrink-0 mt-0.5">2</span>
+          <span>Notion の利用準備を行う</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <span class="w-5 h-5 bg-violet-100 rounded-full flex items-center justify-center text-violet-500 text-xs flex-shrink-0 mt-0.5">3</span>
+          <span><strong class="text-gray-800">学んだこと／研究への接続／次に整備すること</strong>を記述する</span>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 出席・ふりかえりフォーム -->
+  <section class="max-w-4xl mx-auto px-4 sm:px-6 mb-12" id="attendance-form">
+    <div class="fade-in rounded-3xl p-6 sm:p-8 attendance-card">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center text-xl">✋</div>
+        <h2 class="font-bold text-lg text-gray-800">出席登録・ふりかえり</h2>
+      </div>
+
+<form id="reflectionForm" onsubmit="return submitReflection(event)">
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">学籍番号 <span class="text-red-500">*</span></label>
+            <input type="text" id="studentId" required placeholder="例: 12A34567B"
+              class="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-white/70 text-sm focus:outline-none focus:ring-2 focus:ring-purple-300 focus:border-transparent transition-all">
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">名前 <span class="text-red-500">*</span></label>
+            <input type="text" id="studentName" required placeholder="例: 大阪 太郎"
+              class="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-white/70 text-sm focus:outline-none focus:ring-2 focus:ring-purple-300 focus:border-transparent transition-all">
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">メールアドレス <span class="text-red-500">*</span></label>
+            <input type="email" id="studentEmail" required placeholder="例: example@osaka-u.ac.jp"
+              class="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-white/70 text-sm focus:outline-none focus:ring-2 focus:ring-purple-300 focus:border-transparent transition-all">
+            <p class="text-xs text-gray-400 mt-1">入力内容のコピーがこのアドレスに送信されます</p>
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">ふりかえり（感想・気づき・質問など） <span class="text-red-500">*</span></label>
+            <textarea id="reflection" required rows="6" minlength="200"
+              placeholder="この回で学んだこと、気づいたこと、疑問に思ったことなどを自由に記述してください（200文字以上、生成AIを使わず自分の言葉で書いてください）"
+              class="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-white/70 text-sm focus:outline-none focus:ring-2 focus:ring-purple-300 focus:border-transparent transition-all resize-y"
+              oninput="updateCharCount()"></textarea>
+            <div class="flex justify-between mt-1">
+              <p class="text-xs text-gray-400">生成AIを使わず、自分の言葉で記述してください</p>
+              <p class="text-xs" id="charCount"><span class="text-gray-400">0</span><span class="text-gray-400"> / 200文字以上</span></p>
+            </div>
+          </div>
+        </div>
+
+        <div id="formMessage" class="mt-4 text-sm hidden rounded-xl px-4 py-3"></div>
+
+        <div class="mt-6 rounded-2xl border border-amber-200 bg-amber-50/80 px-4 py-3 text-xs text-amber-900 leading-relaxed">
+          <p class="font-semibold mb-1">⚠️ ご注意ください</p>
+          <p>授業で説明していない内容・話していない内容をふりかえりシートに記載されている場合は、授業動画を見ていない＆内省も行っていないものとして、評価はできませんのでご注意ください。</p>
+        </div>
+
+        <button type="submit" id="submitBtn"
+          class="mt-6 w-full py-3 rounded-xl bg-gradient-to-r from-purple-400 via-pink-400 to-rose-400 text-white font-bold text-sm hover:from-purple-500 hover:via-pink-500 hover:to-rose-500 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none">
+          提出する
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Navigation Footer -->
+  <footer class="max-w-4xl mx-auto px-4 sm:px-6 pb-12">
+    <div class="fade-in flex items-center justify-between">
+      <a href="intro.html" class="text-sm text-gray-500 hover:text-violet-500 transition-colors">← はじめに</a>
+      <a href="../#sessions" class="text-sm text-gray-400 hover:text-violet-500 transition-colors">授業一覧</a>
+      <a href="2.html" class="text-sm text-gray-500 hover:text-violet-500 transition-colors">第2回 →</a>
+    </div>
+  </footer>
+
+  <script>
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add('visible');
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+  </script>
+
+  <script>
+    // ★ デプロイしたGoogle Apps ScriptのURLをここに入力してください
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyeNDOLgph8I4VViQ07UMllQjXu_gowhHEB5lS6qBT8USEsGM5m87TVtv01OGFJ7k-W/exec';
+    const SESSION_NUMBER = 1;
+
+    function updateCharCount() {
+      const text = document.getElementById('reflection').value;
+      const count = text.length;
+      const countEl = document.getElementById('charCount');
+      if (count >= 200) {
+        countEl.innerHTML = '<span class="text-violet-500 font-semibold">' + count + '</span><span class="text-violet-500"> / 200文字以上 ✓</span>';
+      } else {
+        countEl.innerHTML = '<span class="text-purple-500 font-semibold">' + count + '</span><span class="text-gray-400"> / 200文字以上</span>';
+      }
+    }
+
+    function showMessage(msg, isError) {
+      const el = document.getElementById('formMessage');
+      el.textContent = msg;
+      el.className = 'mt-4 text-sm rounded-xl px-4 py-3 ' +
+        (isError ? 'bg-red-50 text-red-700 border border-red-200' : 'bg-violet-50 text-violet-600 border border-violet-200');
+      el.classList.remove('hidden');
+    }
+
+    async function submitReflection(e) {
+      e.preventDefault();
+
+      const reflection = document.getElementById('reflection').value;
+      if (reflection.length < 200) {
+        showMessage('ふりかえりは200文字以上で記入してください（現在 ' + reflection.length + ' 文字）。', true);
+        return false;
+      }
+
+      const btn = document.getElementById('submitBtn');
+      btn.disabled = true;
+      btn.textContent = '送信中...';
+
+      const payload = {
+        session: SESSION_NUMBER,
+        studentId: document.getElementById('studentId').value.trim(),
+        name: document.getElementById('studentName').value.trim(),
+        email: document.getElementById('studentEmail').value.trim(),
+        reflection: reflection
+      };
+
+      try {
+        const res = await fetch(SCRIPT_URL, {
+          method: 'POST',
+          body: JSON.stringify(payload)
+        });
+        const result = await res.json();
+        showMessage(result.message, !result.success);
+
+        if (result.success) {
+          document.getElementById('reflectionForm').reset();
+          updateCharCount();
+          btn.textContent = '提出済み';
+        } else {
+          btn.disabled = false;
+          btn.textContent = '提出する';
+        }
+      } catch (err) {
+        showMessage('通信エラーが発生しました。時間をおいて再度お試しください。', true);
+        btn.disabled = false;
+        btn.textContent = '提出する';
+      }
+
+      return false;
+    }
+  </script>
+
+</body>
+</html>

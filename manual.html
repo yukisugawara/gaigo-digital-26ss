@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TF/TA 業務マニュアル | 人文学とデジタル技術（2026）</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;600;700;800;900&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Noto Sans JP"', '"Zen Kaku Gothic New"', 'sans-serif'],
+          },
+        },
+      },
+    }
+  </script>
+  <style>
+    * { font-family: 'Noto Sans JP', 'Zen Kaku Gothic New', sans-serif; }
+
+    .gradient-bg {
+      background: linear-gradient(-45deg, #fef3c7, #fce7f3, #e0e7ff, #ccfbf1, #fef3c7);
+      background-size: 400% 400%;
+      animation: gradientShift 20s ease infinite;
+    }
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .glass {
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+    }
+    .glass-strong {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(30px);
+      -webkit-backdrop-filter: blur(30px);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+    }
+
+    .gradient-text {
+      background: linear-gradient(135deg, #7c3aed, #ec4899, #f59e0b);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .fade-in {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.4;
+      animation: blobFloat 8s ease-in-out infinite;
+    }
+    @keyframes blobFloat {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(30px, -30px) scale(1.1); }
+      66% { transform: translate(-20px, 20px) scale(0.9); }
+    }
+
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(124, 58, 237, 0.3); border-radius: 4px; }
+
+    html { scroll-behavior: smooth; }
+
+    .section-card {
+      transition: all 0.3s ease;
+    }
+    .section-card:hover {
+      box-shadow: 0 10px 40px -10px rgba(124, 58, 237, 0.1);
+    }
+
+    /* Manual auth overlay */
+    .manual-auth-overlay {
+      position: fixed; inset: 0; z-index: 9998;
+      display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(-45deg, #fef3c7, #fce7f3, #e0e7ff, #ccfbf1);
+      background-size: 400% 400%;
+      animation: gradientShift 20s ease infinite;
+    }
+
+    /* Tab styles */
+    .tab-btn {
+      padding: 0.75rem 1.5rem;
+      font-weight: 700;
+      font-size: 0.95rem;
+      border-radius: 1rem 1rem 0 0;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      color: #9ca3af;
+    }
+    .tab-btn.active {
+      background: rgba(255,255,255,0.8);
+      color: #7c3aed;
+      box-shadow: 0 -4px 12px rgba(124, 58, 237, 0.1);
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+
+    .role-tag {
+      display: inline-block;
+      padding: 0.15rem 0.5rem;
+      border-radius: 0.5rem;
+      font-size: 0.7rem;
+      font-weight: 700;
+      margin-right: 0.25rem;
+    }
+    .role-ta { background: #dbeafe; color: #1d4ed8; }
+    .role-tf { background: #fce7f3; color: #be185d; }
+    .role-tfta { background: #ede9fe; color: #6d28d9; }
+
+    .session-badge {
+      background: linear-gradient(135deg, #7c3aed, #ec4899);
+      color: white;
+      width: 2.5rem; height: 2.5rem;
+      border-radius: 0.75rem;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 0.95rem; flex-shrink: 0;
+    }
+  </style>
+</head>
+<body class="gradient-bg min-h-screen relative overflow-x-hidden">
+
+  <!-- Manual Auth Overlay -->
+  <div class="manual-auth-overlay" id="manual-auth">
+    <div style="background:rgba(255,255,255,0.8);backdrop-filter:blur(20px);border-radius:2rem;
+      padding:2.5rem;max-width:380px;width:90%;text-align:center;box-shadow:0 25px 50px rgba(0,0,0,0.1);
+      border:1px solid rgba(255,255,255,0.9);">
+      <div style="margin-bottom:1rem;">
+        <div style="width:64px;height:64px;margin:0 auto;background:linear-gradient(135deg,#7c3aed,#ec4899);border-radius:1.25rem;display:flex;align-items:center;justify-content:center;font-size:1.8rem;">
+          📖
+        </div>
+      </div>
+      <p style="font-size:1.1rem;font-weight:800;color:#1f2937;margin-bottom:0.25rem;">TF/TA 業務マニュアル</p>
+      <p style="font-size:0.75rem;color:#9ca3af;margin-bottom:1.5rem;">ティーチングスタッフ専用ページです<br>パスワードを入力してください</p>
+      <input id="manual-input" type="password" placeholder="パスワード"
+        style="width:100%;padding:0.75rem 1rem;border-radius:1rem;border:2px solid #e5e7eb;
+        font-size:1rem;text-align:center;outline:none;transition:border 0.2s;box-sizing:border-box;"
+        onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='#e5e7eb'">
+      <p id="manual-error" style="color:#ef4444;font-size:0.75rem;margin-top:0.5rem;display:none;">パスワードが違います</p>
+      <button id="manual-btn"
+        style="margin-top:1rem;width:100%;padding:0.75rem;border-radius:1rem;border:none;
+        background:linear-gradient(135deg,#7c3aed,#ec4899);color:white;font-size:0.9rem;
+        font-weight:700;cursor:pointer;transition:opacity 0.2s;"
+        onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
+        マニュアルを開く
+      </button>
+    </div>
+  </div>
+
+  <!-- Floating decorative blobs -->
+  <div class="blob w-96 h-96 bg-purple-300 top-20 -left-48 fixed" style="animation-delay: 0s;"></div>
+  <div class="blob w-80 h-80 bg-pink-300 top-1/2 -right-40 fixed" style="animation-delay: 2s;"></div>
+  <div class="blob w-72 h-72 bg-amber-200 bottom-20 left-1/3 fixed" style="animation-delay: 4s;"></div>
+
+  <!-- Navigation -->
+  <nav class="fixed top-0 left-0 right-0 z-50 glass-strong">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-2 text-gray-800 font-bold text-sm sm:text-base group">
+        <div class="w-8 h-8">
+          <svg width="32" height="32" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="nA" x1="0" y1="0" x2="50" y2="60"><stop stop-color="#a78bfa"/><stop offset="1" stop-color="#6366f1"/></linearGradient>
+              <linearGradient id="nB" x1="30" y1="10" x2="90" y2="70"><stop stop-color="#67e8f9"/><stop offset="1" stop-color="#06b6d4"/></linearGradient>
+              <linearGradient id="nC" x1="50" y1="20" x2="110" y2="90"><stop stop-color="#f9a8d4"/><stop offset="1" stop-color="#ec4899"/></linearGradient>
+              <linearGradient id="nD" x1="70" y1="40" x2="130" y2="110"><stop stop-color="#fbbf24"/><stop offset="1" stop-color="#f59e0b"/></linearGradient>
+              <linearGradient id="nE" x1="90" y1="50" x2="150" y2="120"><stop stop-color="#86efac"/><stop offset="1" stop-color="#22c55e"/></linearGradient>
+            </defs>
+            <path d="M12 58C12 42 24 30 40 30C56 30 68 42 68 58C68 74 56 82 40 82C37 82 34 81.5 31 80L18 87L21 77C15 72 12 65 12 58Z" fill="url(#nA)" opacity="0.8"/>
+            <path d="M32 48C32 32 44 22 60 22C76 22 88 32 88 48C88 64 76 72 60 72C57 72 54 71.5 51 70L38 77L41 67C35 62 32 55 32 48Z" fill="url(#nB)" opacity="0.7"/>
+            <path d="M52 68C52 52 64 42 80 42C96 42 108 52 108 68C108 84 96 92 80 92C77 92 74 91.5 71 90L58 97L61 87C55 82 52 75 52 68Z" fill="url(#nC)" opacity="0.7"/>
+            <path d="M72 54C72 38 84 28 100 28C116 28 128 38 128 54C128 70 116 78 100 78C97 78 94 77.5 91 76L78 83L81 73C75 68 72 61 72 54Z" fill="url(#nD)" opacity="0.65"/>
+            <path d="M92 72C92 56 104 46 120 46C136 46 148 56 148 72C148 88 136 96 120 96C117 96 114 95.5 111 94L98 101L101 91C95 86 92 79 92 72Z" fill="url(#nE)" opacity="0.6"/>
+          </svg>
+        </div>
+        <span>人文学とデジタル技術</span>
+      </a>
+      <a href="index.html" class="text-sm font-medium text-gray-500 hover:text-purple-600 transition-colors">ホームに戻る</a>
+    </div>
+  </nav>
+
+  <!-- Main Content (hidden until auth) -->
+  <div id="manual-content" style="display:none;">
+
+    <!-- Header -->
+    <header class="relative pt-28 pb-10 px-4 sm:px-6">
+      <div class="max-w-4xl mx-auto text-center fade-in">
+        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-strong text-sm font-semibold text-purple-700 mb-6">
+          📖 ティーチングスタッフ専用
+        </div>
+        <h1 class="text-3xl sm:text-4xl font-black text-gray-800 mb-3">TF/TA 業務マニュアル</h1>
+        <p class="text-gray-500">「人文学とデジタル技術」2026 ティーチングスタッフのための業務ガイド</p>
+      </div>
+    </header>
+
+    <!-- ==================== 基礎編 ==================== -->
+    <div id="tab-basic" class="tab-content active">
+      <section class="max-w-4xl mx-auto px-4 sm:px-6 py-8">
+
+        <!-- 基本事項 -->
+        <div class="fade-in glass rounded-3xl p-6 sm:p-8 mb-6 section-card">
+          <div class="flex items-center gap-3 mb-5">
+            <div class="w-10 h-10 bg-gradient-to-br from-purple-400 to-violet-500 rounded-xl flex items-center justify-center text-white text-lg">📋</div>
+            <h2 class="font-black text-xl text-gray-800">基本事項</h2>
+          </div>
+
+          <div class="space-y-4">
+            <div class="bg-white/50 rounded-2xl p-5">
+              <h3 class="font-bold text-gray-700 mb-3">勤務時間</h3>
+              <p class="text-sm text-gray-600 mb-3">本授業（春夏学期、全15回）における TA としての勤務時間は<span class="font-bold text-purple-600">合計30時間を上限</span>として予定しています。</p>
+
+              <div class="bg-purple-50 rounded-xl p-4">
+                <h4 class="font-bold text-purple-700 text-sm mb-2">春夏学期の月別勤務例（4月〜8月、全15回）</h4>
+                <ul class="text-xs text-gray-600 space-y-1.5">
+                  <li><span class="font-semibold">4月</span>：授業3回（2h x3 = 6時間）→ <span class="font-semibold text-purple-700">支払対象：6時間</span></li>
+                  <li><span class="font-semibold">5月</span>：授業3回（2h x3 = 6時間）→ <span class="font-semibold text-purple-700">支払対象：6時間</span></li>
+                  <li><span class="font-semibold">6月</span>：授業3回（2h x3 = 6時間）→ <span class="font-semibold text-purple-700">支払対象：6時間</span></li>
+                  <li><span class="font-semibold">7月</span>：授業4回（2h x4 = 8時間）→ <span class="font-semibold text-purple-700">支払対象：8時間</span></li>
+                  <li><span class="font-semibold">8月</span>：授業2回（2h x2 = 4時間）→ <span class="font-semibold text-purple-700">支払対象：4時間</span></li>
+                </ul>
+                <p class="text-xs font-bold text-purple-700 mt-2 pt-2 border-t border-purple-200">合計：30時間</p>
+              </div>
+
+              <div class="mt-4 bg-red-50 rounded-xl p-4 border border-red-200">
+                <p class="text-xs text-red-700 font-semibold"><strong>⚠ 重要：</strong>春夏学期（4月〜8月）を通じて、勤務時間は<strong>合計30時間を超えないように</strong>注意してください（教員・TF・TAともに）。</p>
+              </div>
+
+              <div class="mt-4 bg-blue-50 rounded-xl p-4 border border-blue-100">
+                <p class="text-xs text-gray-700"><strong>※給与の端数処理について：</strong>給与は月ごとに集計し、月ごとの合計勤務時間に1時間未満の端数（30分など）がある場合は、<strong>1時間に切り上げて</strong>計算されます。そのため、単純な合計時間と、実際の給与支払い対象時間が異なる場合があります。</p>
+              </div>
+
+              <div class="mt-4 bg-amber-50 rounded-xl p-4">
+                <h4 class="font-bold text-amber-700 text-sm mb-1">備考</h4>
+                <p class="text-xs text-gray-600">博士前期課程の学生がTA業務をする場合、大学の規定による時給は<span class="font-bold">1,400円</span>です。TFは<span class="font-bold">1,800円</span>です。</p>
+              </div>
+            </div>
+
+            <p class="text-sm text-gray-600 px-1">TAとしてやることは、<span class="font-bold">（A）授業補助</span>と<span class="font-bold">（B）勤務報告</span>があります。</p>
+          </div>
+        </div>
+
+        <!-- (A) 授業補助 -->
+        <div class="fade-in glass rounded-3xl p-6 sm:p-8 mb-6 section-card">
+          <div class="flex items-center gap-3 mb-5">
+            <div class="w-10 h-10 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-xl flex items-center justify-center text-white text-lg">🏫</div>
+            <h2 class="font-black text-xl text-gray-800">（A）授業補助</h2>
+          </div>
+
+          <!-- (1) 授業時間内の授業補助 -->
+          <div class="bg-white/50 rounded-2xl p-5 mb-4">
+            <h3 class="font-bold text-gray-700 mb-3">（1）授業時間内の授業補助</h3>
+            <p class="text-sm text-gray-400 italic">内容は準備中です。</p>
+          </div>
+
+          <!-- (2) ふりかえり -->
+          <div class="bg-white/50 rounded-2xl p-5 mb-4">
+            <h3 class="font-bold text-gray-700 mb-3">（2）授業後のティーチングスタッフのふりかえり</h3>
+            <p class="text-sm text-gray-400 italic">内容は準備中です。</p>
+          </div>
+
+          <!-- (3) 授業時間外 -->
+          <div class="bg-white/50 rounded-2xl p-5">
+            <h3 class="font-bold text-gray-700 mb-3">（3）授業時間外の提出物の管理、授業の準備</h3>
+            <p class="text-sm text-gray-400 italic">内容は準備中です。</p>
+          </div>
+        </div>
+
+        <!-- (B) 勤務報告 -->
+        <div class="fade-in glass rounded-3xl p-6 sm:p-8 mb-6 section-card">
+          <div class="flex items-center gap-3 mb-5">
+            <div class="w-10 h-10 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-xl flex items-center justify-center text-white text-lg">📝</div>
+            <h2 class="font-black text-xl text-gray-800">（B）勤務報告</h2>
+          </div>
+
+          <!-- (1) 勤務時間の報告 -->
+          <div class="bg-white/50 rounded-2xl p-5 mb-4">
+            <h3 class="font-bold text-gray-700 mb-3">（1）勤務開始時・終了時の報告</h3>
+            <p class="text-sm text-gray-600 mb-4">勤務の開始時と終了時に、主担当教員のメールアドレスまで、下のようなフォーマットでメールを送ってください。対面の授業のTAと異なり、勤務記録が残らないので、メールのやりとりで記録する必要があります。</p>
+
+            <p class="text-xs font-bold text-gray-700 mb-2">【勤務開始時の文面例】</p>
+            <div class="bg-gray-50 rounded-xl p-4 font-mono text-xs text-gray-600 leading-relaxed mb-4">
+              <p>○○先生</p>
+              <p class="mt-2">人文学基礎（人文学と対話）クラス◯TA の△△です。</p>
+              <p class="mt-2">本日の勤務を開始いたします。</p>
+              <p class="mt-2">・勤務開始日時：2026/△/◇（曜日）8:40</p>
+              <p class="mt-2">△△（署名）</p>
+            </div>
+
+            <p class="text-xs font-bold text-gray-700 mb-2">【勤務終了時の文面例】</p>
+            <div class="bg-gray-50 rounded-xl p-4 font-mono text-xs text-gray-600 leading-relaxed">
+              <p>○○先生</p>
+              <p class="mt-2">人文学基礎（人文学と対話）クラス◯TA の△△です。</p>
+              <p class="mt-2">本日の勤務時間と内容は以下の通りです：</p>
+              <p class="mt-2">・勤務日時：2026/△/◇（曜日）8:40-10:40　2時間</p>
+              <p>・勤務内容：授業運営補助</p>
+              <p class="mt-2">△△（署名）</p>
+            </div>
+          </div>
+
+          <!-- (2) 勤務時間記録簿 -->
+          <div class="bg-white/50 rounded-2xl p-5">
+            <h3 class="font-bold text-gray-700 mb-3">（2）月末に勤務時間等記録簿を人文学研究科人事係に提出</h3>
+            <p class="text-sm text-gray-600 mb-2">その月の締め切りまでに勤務時間記録簿の予定を記入したものを月末より一週間前に人文学研究科人事係にメールで提出、月末までに本紙を本人および主担当教員押印の上、人事係に提出してください。</p>
+            <p class="text-sm text-gray-600 mb-2">人文学研究科人事係から勤務開始前に、TAの方にメールで必要書類が届きます。「TATF留意事項」の内容をよく確認し、各自の責任で書類の作成・押印・提出をお願いします。</p>
+            <div class="bg-blue-50 rounded-xl p-3 mt-3">
+              <p class="text-xs text-blue-700">基本的には押印は対面で行うことが原則ですが、難しい場合はPDFを主担当に共有する、書類をメールボックスに入れておくなどの方法もあります。主担当教員に個別にご連絡ください。</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 学年暦 -->
+        <div class="fade-in glass rounded-3xl p-6 sm:p-8 section-card mb-6">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-xl flex items-center justify-center text-white text-lg">📅</div>
+            <div>
+              <h2 class="font-black text-xl text-gray-800">学年暦</h2>
+              <p class="text-xs text-gray-400">令和8年度 全学共通教育 学年暦</p>
+            </div>
+          </div>
+          <div class="space-y-2">
+            <a href="siryo/calendar/R8_gakunenreki.pdf" target="_blank" class="flex items-center gap-3 bg-white/50 rounded-xl p-3 hover:bg-white/80 transition-colors group">
+              <div class="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                <svg class="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+              </div>
+              <span class="text-sm text-gray-700 group-hover:text-blue-600 transition-colors font-medium">令和8年度 全学共通教育 学年暦（PDF）</span>
+            </a>
+          </div>
+          <div class="mt-3 text-xs text-gray-500 space-y-1">
+            <p><span class="font-semibold">春学期：</span>4月1日〜6月14日　<span class="font-semibold">夏学期：</span>6月15日〜9月30日</p>
+            <p><span class="font-semibold">秋学期：</span>10月1日〜12月2日　<span class="font-semibold">冬学期：</span>12月3日〜3月31日</p>
+          </div>
+        </div>
+
+        <!-- 人事係配付書類 -->
+        <div class="fade-in glass rounded-3xl p-6 sm:p-8 section-card">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 bg-gradient-to-br from-gray-400 to-slate-500 rounded-xl flex items-center justify-center text-white text-lg">📎</div>
+            <div>
+              <h2 class="font-black text-xl text-gray-800">人事係配付書類</h2>
+              <p class="text-xs text-gray-400">人文学研究科人事係からTF/TAに配付される書類一式です</p>
+            </div>
+          </div>
+
+          <div class="space-y-2">
+            <a href="siryo/配布資料（人文学林TA_R8）/配付02・別紙様式3（TA･TF従事時間報告書）.xlsx" download class="flex items-center gap-3 bg-white/50 rounded-xl p-3 hover:bg-white/80 transition-colors group">
+              <div class="w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-semibold text-gray-700 group-hover:text-purple-600 transition-colors truncate">TA・TF従事時間報告書（別紙様式3）</p>
+                <p class="text-[10px] text-gray-400">xlsx</p>
+              </div>
+            </a>
+
+            <a href="siryo/配布資料（人文学林TA_R8）/配付03 TA・TF留意事項・20260401.doc" download class="flex items-center gap-3 bg-white/50 rounded-xl p-3 hover:bg-white/80 transition-colors group">
+              <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-semibold text-gray-700 group-hover:text-purple-600 transition-colors truncate">TA・TF留意事項</p>
+                <p class="text-[10px] text-gray-400">doc</p>
+              </div>
+            </a>
+
+            <a href="siryo/配布資料（人文学林TA_R8）/配付04 （R3.11）学生向けお知らせ（従事可能年数）・20230221DL.docx" download class="flex items-center gap-3 bg-white/50 rounded-xl p-3 hover:bg-white/80 transition-colors group">
+              <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-semibold text-gray-700 group-hover:text-purple-600 transition-colors truncate">学生向けお知らせ（従事可能年数）</p>
+                <p class="text-[10px] text-gray-400">docx</p>
+              </div>
+            </a>
+
+            <a href="siryo/配布資料（人文学林TA_R8）/配付05 「STOP！研究費不正（TA,RA,ｱﾙﾊﾞｲﾄ,ﾁｭｰﾀｰ等）」.pdf" download class="flex items-center gap-3 bg-white/50 rounded-xl p-3 hover:bg-white/80 transition-colors group">
+              <div class="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                <svg class="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-semibold text-gray-700 group-hover:text-purple-600 transition-colors truncate">STOP！研究費不正</p>
+                <p class="text-[10px] text-gray-400">pdf</p>
+              </div>
+            </a>
+
+            <a href="siryo/配布資料（人文学林TA_R8）/配付06 新任教職員等向けコンプライアンス教材・20230727.pdf" download class="flex items-center gap-3 bg-white/50 rounded-xl p-3 hover:bg-white/80 transition-colors group">
+              <div class="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                <svg class="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-semibold text-gray-700 group-hover:text-purple-600 transition-colors truncate">コンプライアンス教材</p>
+                <p class="text-[10px] text-gray-400">pdf</p>
+              </div>
+            </a>
+
+            <a href="siryo/配布資料（人文学林TA_R8）/配付07 TA及びTFの受入れに関する規程・20250401.pdf" download class="flex items-center gap-3 bg-white/50 rounded-xl p-3 hover:bg-white/80 transition-colors group">
+              <div class="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                <svg class="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-semibold text-gray-700 group-hover:text-purple-600 transition-colors truncate">TA及びTFの受入れに関する規程</p>
+                <p class="text-[10px] text-gray-400">pdf</p>
+              </div>
+            </a>
+
+            <a href="siryo/配布資料（人文学林TA_R8）/配布詳細MAP（言文B棟　人事係）.pdf" download class="flex items-center gap-3 bg-white/50 rounded-xl p-3 hover:bg-white/80 transition-colors group">
+              <div class="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                <svg class="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-semibold text-gray-700 group-hover:text-purple-600 transition-colors truncate">人事係 配布詳細MAP（言文B棟）</p>
+                <p class="text-[10px] text-gray-400">pdf</p>
+              </div>
+            </a>
+          </div>
+        </div>
+
+      </section>
+    </div>
+
+
+    <!-- Footer -->
+    <footer class="max-w-4xl mx-auto px-4 sm:px-6 pb-12 pt-4">
+      <div class="text-center">
+        <a href="index.html" class="inline-flex items-center gap-2 text-sm font-semibold text-purple-600 hover:text-purple-800 transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+          ホームに戻る
+        </a>
+      </div>
+      <p class="text-center text-xs text-gray-300 mt-4">人文学とデジタル技術 2026</p>
+    </footer>
+
+  </div>
+
+  <script>
+    // Manual page auth
+    (function() {
+      const MANUAL_PASS = 'kikukotonotikara';
+      const MANUAL_KEY = 'hd_manual_auth_2026';
+
+      if (sessionStorage.getItem(MANUAL_KEY) === 'true') {
+        document.getElementById('manual-auth').style.display = 'none';
+        document.getElementById('manual-content').style.display = 'block';
+        return;
+      }
+
+      const input = document.getElementById('manual-input');
+      const btn = document.getElementById('manual-btn');
+      const error = document.getElementById('manual-error');
+
+      function tryManualAuth() {
+        if (input.value === MANUAL_PASS) {
+          sessionStorage.setItem(MANUAL_KEY, 'true');
+          const overlay = document.getElementById('manual-auth');
+          overlay.style.transition = 'opacity 0.5s ease';
+          overlay.style.opacity = '0';
+          setTimeout(() => {
+            overlay.style.display = 'none';
+            document.getElementById('manual-content').style.display = 'block';
+          }, 500);
+        } else {
+          error.style.display = 'block';
+          input.style.borderColor = '#ef4444';
+          input.value = '';
+          setTimeout(() => { error.style.display = 'none'; input.style.borderColor = '#e5e7eb'; }, 2000);
+        }
+      }
+
+      btn.addEventListener('click', tryManualAuth);
+      input.addEventListener('keydown', (e) => { if (e.key === 'Enter') tryManualAuth(); });
+      setTimeout(() => input.focus(), 100);
+    })();
+
+    // Scroll animations
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add('visible');
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>

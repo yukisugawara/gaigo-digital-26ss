@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>第2回 社会人基礎としてのデジタルツール | 人文学とデジタル技術（2026）</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&family=M+PLUS+Rounded+1c:wght@400;500;700;800;900&family=Noto+Sans+JP:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"M PLUS Rounded 1c"', '"Noto Sans JP"', 'sans-serif'],
+          },
+        },
+      },
+    }
+  </script>
+  <style>
+    * { font-family: 'M PLUS Rounded 1c', 'Noto Sans JP', sans-serif; }
+    .gradient-bg {
+      background: linear-gradient(-45deg, #fdf2f8, #ede9fe, #fff7ed, #e0f2fe, #fce7f3, #f5f3ff);
+      background-size: 400% 400%;
+      animation: gradientShift 20s ease infinite;
+    }
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    .glass { background: rgba(255,255,255,0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.8); }
+    .glass-strong { background: rgba(255,255,255,0.85); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border: 1px solid rgba(255,255,255,0.9); }
+    .gradient-text { background: linear-gradient(135deg, #8b5cf6, #ec4899, #f97316, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .fade-in { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.4,0,0.2,1); }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+    .blob { position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.5; animation: blobFloat 8s ease-in-out infinite; }
+    @keyframes blobFloat { 0%,100% { transform: translate(0,0) scale(1); } 33% { transform: translate(30px,-30px) scale(1.1); } 66% { transform: translate(-20px,20px) scale(0.9); } }
+    ::-webkit-scrollbar { width: 8px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: rgba(139,92,246,0.3); border-radius: 4px; }
+    .pill { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; }
+    .topic-card { transition: all 0.3s ease; }
+    .topic-card:hover { transform: translateY(-4px); box-shadow: 0 12px 24px -8px rgba(99,102,241,0.12); }
+    html { scroll-behavior: smooth; }
+    .info-box { background: rgba(255,255,255,0.5); border-radius: 1rem; padding: 1rem 1.25rem; }
+    code { background: rgba(139,92,246,.08); padding: 0.15rem 0.4rem; border-radius: 0.375rem; font-size: 0.8em; font-family: 'SF Mono','Fira Code',monospace; color: #8b5cf6; }
+  
+    .attendance-card {
+      background: linear-gradient(135deg, rgba(243,232,255,0.9), rgba(252,231,243,0.9), rgba(254,242,232,0.9));
+      backdrop-filter: blur(30px);
+      -webkit-backdrop-filter: blur(30px);
+      border: 1px solid rgba(216,180,254,0.4);
+      box-shadow: 0 8px 32px rgba(168,85,247,0.08);
+    }
+    .paper-note {
+      position: relative;
+      background-color: #fffdf5;
+      background-image:
+        linear-gradient(to right, transparent 0, transparent 48px, rgba(239,68,68,0.35) 48px, rgba(239,68,68,0.35) 49px, transparent 49px),
+        repeating-linear-gradient(to bottom, transparent 0, transparent 31px, rgba(59,130,246,0.18) 31px, rgba(59,130,246,0.18) 32px);
+      border-radius: 0.25rem;
+      padding: 1.75rem 1.5rem 1.75rem 3.75rem;
+      box-shadow: 0 1px 0 rgba(0,0,0,0.04), 0 12px 24px -12px rgba(0,0,0,0.15), 0 2px 4px rgba(0,0,0,0.05);
+      transform: rotate(-0.3deg);
+      font-family: 'Klee One', 'M PLUS Rounded 1c', sans-serif;
+      color: #374151;
+      line-height: 32px;
+    }
+    .paper-note::before {
+      content: '';
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%) rotate(-4deg);
+      width: 80px;
+      height: 20px;
+      background: rgba(250, 204, 21, 0.45);
+      border: 1px dashed rgba(202, 138, 4, 0.25);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    }
+    .paper-note h4 {
+      font-family: 'Klee One', 'M PLUS Rounded 1c', sans-serif;
+      font-weight: 600;
+      color: #1f2937;
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+    }
+    .paper-note ul { list-style: none; padding: 0; margin: 0; }
+    .paper-note > ul > li { padding-left: 1.5rem; position: relative; font-size: 0.95rem; }
+    .paper-note > ul > li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: #8b5cf6;
+      font-weight: 700;
+    }
+    .paper-note ul ul { margin-top: 0.15rem; margin-bottom: 0.35rem; padding-left: 0.25rem; }
+    .paper-note ul ul li { font-size: 0.85rem; color: #4b5563; padding-left: 1rem; position: relative; }
+    .paper-note ul ul li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: #ec4899;
+    }
+    .paper-note .paper-tip {
+      margin-top: 1rem;
+      padding-top: 0.5rem;
+      border-top: 1px dashed rgba(156,163,175,0.5);
+      font-size: 0.85rem;
+      color: #6b7280;
+    }
+  </style>
+</head>
+<body class="gradient-bg min-h-screen relative overflow-x-hidden">
+  <!-- Password Gate -->
+  <div id="password-gate" style="display:none; position:fixed; inset:0; z-index:99999; background:linear-gradient(-45deg,#fdf2f8,#ede9fe,#fff7ed,#e0f2fe); display:flex; align-items:center; justify-content:center;">
+    <div style="background:rgba(255,255,255,0.85); backdrop-filter:blur(24px); border-radius:1.5rem; padding:2.5rem; max-width:360px; width:90%; text-align:center; box-shadow:0 8px 32px rgba(0,0,0,0.08);">
+      <p style="font-size:2rem; margin-bottom:0.5rem;">🔒</p>
+      <h2 style="font-weight:800; font-size:1.2rem; color:#1f2937; margin-bottom:0.5rem;">パスワードを入力してください</h2>
+      <p style="font-size:0.75rem; color:#9ca3af; margin-bottom:1.5rem;">このページは受講者限定です</p>
+      <input id="pw-input" type="password" placeholder="パスワード" style="width:100%; padding:0.7rem 1rem; border-radius:0.75rem; border:1px solid #e5e7eb; font-size:0.9rem; outline:none; margin-bottom:0.75rem;" onkeydown="if(event.key==='Enter')checkPw()">
+      <button onclick="checkPw()" style="width:100%; padding:0.7rem; border-radius:0.75rem; background:linear-gradient(135deg,#8b5cf6,#ec4899); color:white; font-weight:700; font-size:0.9rem; border:none; cursor:pointer;">入る</button>
+      <p id="pw-error" style="color:#ef4444; font-size:0.75rem; margin-top:0.5rem; display:none;">パスワードが違います</p>
+    </div>
+  </div>
+  <script>
+    function checkPw() {
+      if (document.getElementById('pw-input').value === 'repair') {
+        sessionStorage.setItem('hdt_auth', '1');
+        document.getElementById('password-gate').style.display = 'none';
+      } else {
+        document.getElementById('pw-error').style.display = 'block';
+      }
+    }
+    if (sessionStorage.getItem('hdt_auth') !== '1') {
+      document.getElementById('password-gate').style.display = 'flex';
+    } else {
+      document.getElementById('password-gate').style.display = 'none';
+    }
+  </script>
+
+  <div class="blob w-96 h-96 bg-violet-300 top-20 -left-48 fixed" style="animation-delay:0s;"></div>
+  <div class="blob w-80 h-80 bg-pink-300 top-1/2 -right-40 fixed" style="animation-delay:2s;"></div>
+  <div class="blob w-72 h-72 bg-amber-200 bottom-20 left-1/3 fixed" style="animation-delay:4s;"></div>
+
+  <nav class="fixed top-0 left-0 right-0 z-50 glass-strong">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+      <a href="../" class="flex items-center gap-2 text-gray-800 font-bold text-sm sm:text-base hover:text-violet-500 transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+        人文学とデジタル技術
+      </a>
+      <div class="flex items-center gap-3 sm:gap-6 text-sm font-medium text-gray-600">
+        <a href="../#sessions" class="hover:text-violet-500 transition-colors hidden sm:block">授業一覧</a>
+        <a href="3.html" class="bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white px-4 py-2 rounded-full text-xs sm:text-sm font-semibold hover:shadow-lg hover:shadow-violet-200 transition-all">次の授業 →</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="relative pt-32 pb-16 px-4 sm:px-6">
+    <div class="max-w-4xl mx-auto text-center">
+      <div class="fade-in">
+        <span class="pill bg-blue-100 text-blue-700 mb-4 inline-block">管理</span>
+        <div class="flex items-center justify-center gap-3 mb-4">
+          <span class="text-6xl sm:text-7xl font-black text-violet-200">02</span>
+        </div>
+        <h1 class="text-2xl sm:text-3xl md:text-4xl font-black leading-tight mb-4">
+          <span class="gradient-text">社会人基礎としてのデジタルツール</span>
+        </h1>
+        <p class="text-lg text-gray-600 font-medium mb-1">目標・タスク・予定・情報の管理</p>
+        <p class="text-base text-gray-500 font-light">第2回　人文学とデジタル技術（2026）</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- 導入 -->
+  <section class="max-w-4xl mx-auto px-4 sm:px-6 mb-8">
+    <div class="fade-in glass rounded-3xl p-6 sm:p-8">
+      <p class="text-sm sm:text-base text-gray-700 leading-relaxed">
+        本章の目的は、研究者や大学院生の皆さんが自身の目標を言語化したうえで、タスク・予定・情報を効率的に管理するための基本的なデジタルツールの使い方を習得し、日々の研究や業務を滞りなく進められる環境を整えることです。目標管理に加え、タスク管理やスケジュール管理、情報管理のスキルは、<strong class="text-gray-800">社会人基礎力の一部として非常に重要</strong>です。本章ではまず目標管理の考え方を整理したうえで、Trello、Google カレンダー、Google ドライブ／スプレッドシート／フォームといった代表的なツールを取り上げ、それぞれの活用方法を丁寧に解説します。
+      </p>
+    </div>
+  </section>
+
+  <!-- 到達点 -->
+  <section class="max-w-4xl mx-auto px-4 sm:px-6 mb-10">
+    <div class="fade-in glass rounded-3xl p-6 sm:p-8 border-l-4 border-blue-400">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center text-xl">🎯</div>
+        <h2 class="font-bold text-lg text-gray-800">本章の到達点</h2>
+      </div>
+      <ul class="space-y-2 text-sm text-gray-600">
+        <li class="flex items-start gap-2"><span class="text-blue-400 mt-0.5">&#9679;</span>目標管理（目的・目標・ミッション・バリューの言語化、就活の自問）</li>
+        <li class="flex items-start gap-2"><span class="text-blue-400 mt-0.5">&#9679;</span>Trello によるタスク管理（カンバン方式・優先順位付け）</li>
+        <li class="flex items-start gap-2"><span class="text-blue-400 mt-0.5">&#9679;</span>Google カレンダーによる予定管理（タイムブロッキング・週次レビュー）</li>
+        <li class="flex items-start gap-2"><span class="text-blue-400 mt-0.5">&#9679;</span>Google ドライブ／スプレッドシート／フォームによる情報管理</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 内容 -->
+  <section class="max-w-4xl mx-auto px-4 sm:px-6 mb-8">
+    <div class="fade-in text-center mb-8">
+      <h2 class="text-2xl sm:text-3xl font-black text-gray-800 mb-2">内容</h2>
+    </div>
+
+    <!-- 2.1 目標管理 -->
+    <div class="fade-in topic-card glass rounded-2xl p-6 mb-5">
+      <div class="flex items-start gap-4">
+        <div class="w-10 h-10 bg-gradient-to-br from-violet-500 to-fuchsia-500 rounded-xl flex items-center justify-center text-white text-sm font-black flex-shrink-0">2.1</div>
+        <div class="w-full">
+          <h3 class="font-bold text-gray-800 mb-2">目標管理</h3>
+          <p class="text-sm text-gray-600 leading-relaxed mb-4">
+            デジタルツールを使いこなす前に、まずは「何のために使うのか」を自分のなかで整理しておくことが大切です。タスクや予定の管理は、あくまでその上位にある目的・目標を実現するための手段です。
+          </p>
+
+          <div class="info-box mb-4">
+            <p class="text-xs font-bold text-gray-700 mb-2">授業の内容に入る前に</p>
+            <ul class="text-sm text-gray-600 space-y-2">
+              <li class="flex items-start gap-2"><span class="text-blue-400 mt-0.5">&#9679;</span>デジタルツールやデジタル技術を人文学研究のなかで使えるようになるのは良いことですが、それはあくまで手段であって、あなたが達成したい目的ではないはずです。</li>
+              <li class="flex items-start gap-2"><span class="text-blue-400 mt-0.5">&#9679;</span>あなたの目的・目標は何ですか？　1 年後や 2 年後、どのような自分になっていたいですか？　どんな人生を送りたいですか？</li>
+              <li class="flex items-start gap-2"><span class="text-blue-400 mt-0.5">&#9679;</span>紙やノート、デジタルなメモツール（Notion や Evernote など）に、2026 年度（2027 年 3 月まで）の自分の目標を書いてみましょう！</li>
+              <li class="flex items-start gap-2"><span class="text-blue-400 mt-0.5">&#9679;</span>1 年の目標は紙に書いて、目に見える位置においておきましょう。</li>
+            </ul>
+          </div>
+
+          <div class="info-box mb-4">
+            <p class="text-xs font-bold text-gray-700 mb-3">目的／目標／ミッション／バリュー</p>
+            <div class="grid sm:grid-cols-2 gap-3">
+              <div class="bg-white/60 rounded-xl p-4">
+                <p class="text-xs font-black text-violet-500 mb-1">客観（Objective）</p>
+                <p class="text-[11px] text-gray-500 mb-3">外に示されているもの（外向き）</p>
+                <ul class="text-sm text-gray-600 space-y-2">
+                  <li><strong class="text-gray-700">目的（Vision）</strong>：「成し遂げようと目指している事柄」</li>
+                  <li><strong class="text-gray-700">目標（Target）</strong>：「目的を達成するために設けた、目じるし」</li>
+                </ul>
+              </div>
+              <div class="bg-white/60 rounded-xl p-4">
+                <p class="text-xs font-black text-pink-500 mb-1">主観（Subjective）</p>
+                <p class="text-[11px] text-gray-500 mb-3">目標を達成するためのエネルギー（内向き）</p>
+                <ul class="text-sm text-gray-600 space-y-2">
+                  <li><strong class="text-gray-700">ミッション（Mission）</strong>：あなたが果たすべき役割・使命・任務</li>
+                  <li><strong class="text-gray-700">バリュー（Value）</strong>：「あなたが大切にしたい価値観」</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="paper-note">
+            <h4>就活の準備（面接篇）</h4>
+            <p style="font-size:0.85rem;color:#4b5563;margin-bottom:0.75rem;">面接の前に、以下の問いに答えられるようにしておきましょう。</p>
+            <ul>
+              <li>なぜその業界（領域）か？</li>
+              <li>なぜその職種か？</li>
+              <li>なぜその企業（学校、組織）か？</li>
+              <li>入社後、何をやりたいか？
+                <ul>
+                  <li>なぜそれに興味を持ったか？</li>
+                  <li>なぜそれをやるのがその企業（学校、組織）でなくてはならないか？（他の業界・他の企業ではなぜダメか？）</li>
+                  <li>その領域の課題は何だと思うか？</li>
+                  <li>どうすれば解決できると思うか？</li>
+                </ul>
+              </li>
+              <li>これまで 1 番頑張ったことは何か？
+                <ul>
+                  <li>そのときの自分の立場は何だったか？</li>
+                  <li>自分はどれだけ貢献したか？</li>
+                  <li>困難だったことは何か？（どう乗り越えたか？）</li>
+                </ul>
+              </li>
+              <li>周りに反対されながらも何かをやり通し、成果を生み出した経験はあるか？</li>
+              <li>自分の強みは何か？（具体的なエピソードとともに）</li>
+              <li>自分の弱みは何か？（具体的なエピソードとともに）</li>
+              <li>周りからどんな人だと言われるか？</li>
+              <li>自分の研究内容をどう伝えるか？</li>
+              <li>逆質問として、面接官に何を聞くか？</li>
+            </ul>
+            <p class="paper-tip">✎ 書きながら考えてみるのがお勧めです。とにかく書き出してみましょう。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 参考資料：ミッション例 -->
+    <div class="fade-in glass rounded-2xl p-6 mb-5 border-l-4 border-violet-300">
+      <div class="flex items-center gap-3 mb-3">
+        <div class="w-10 h-10 bg-violet-100 rounded-xl flex items-center justify-center text-xl">📄</div>
+        <h3 class="font-bold text-gray-800">参考資料：菅原のミッション</h3>
+      </div>
+      <p class="text-sm text-gray-600 leading-relaxed mb-4">
+        参考までに、担当教員・菅原の「ミッション」をまとめた資料を共有します。あなた自身の目的・目標・ミッション・バリューを書き出す際の参考にしてください。
+      </p>
+      <div class="rounded-2xl overflow-hidden border border-violet-200 bg-white/60 mb-3" style="aspect-ratio: 4/3;">
+        <iframe src="../siryo/260327_missions_ysugawara.pdf#view=FitH" class="w-full h-full" title="菅原のミッション資料"></iframe>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        <a href="../siryo/260327_missions_ysugawara.pdf" target="_blank" rel="noopener"
+          class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white text-xs font-bold hover:opacity-90 transition-opacity">
+          <span>🔗 別ウィンドウで開く</span>
+        </a>
+        <a href="../siryo/260327_missions_ysugawara.pdf" download
+          class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/80 text-gray-700 text-xs font-bold border border-gray-200 hover:bg-white transition-colors">
+          <span>⬇ ダウンロード</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- 参考資料：学振ガイド -->
+    <div class="fade-in glass rounded-2xl p-6 mb-5 border-l-4 border-pink-300">
+      <div class="flex items-center gap-3 mb-3">
+        <div class="w-10 h-10 bg-pink-100 rounded-xl flex items-center justify-center text-xl">📄</div>
+        <h3 class="font-bold text-gray-800">参考資料：学振ガイド</h3>
+      </div>
+      <p class="text-sm text-gray-600 leading-relaxed mb-4">
+        日本学術振興会（学振）特別研究員制度の概要や、応募書類の書き方の参考になる資料です。研究者としての目標・キャリアを考える際の参考にしてください。
+      </p>
+      <div class="rounded-2xl overflow-hidden border border-pink-200 bg-white/60 mb-3" style="aspect-ratio: 4/3;">
+        <iframe src="../siryo/gakushin_guide.pdf#view=FitH" class="w-full h-full" title="学振ガイド"></iframe>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        <a href="../siryo/gakushin_guide.pdf" target="_blank" rel="noopener"
+          class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-pink-500 to-rose-500 text-white text-xs font-bold hover:opacity-90 transition-opacity">
+          <span>🔗 別ウィンドウで開く</span>
+        </a>
+        <a href="../siryo/gakushin_guide.pdf" download
+          class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/80 text-gray-700 text-xs font-bold border border-gray-200 hover:bg-white transition-colors">
+          <span>⬇ ダウンロード</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- 2.2 Trello -->
+    <div class="fade-in topic-card glass rounded-2xl p-6 mb-5">
+      <div class="flex items-start gap-4">
+        <div class="w-10 h-10 bg-gradient-to-br from-violet-500 to-fuchsia-500 rounded-xl flex items-center justify-center text-white text-sm font-black flex-shrink-0">2.2</div>
+        <div class="w-full">
+          <h3 class="font-bold text-gray-800 mb-2">Trello によるタスク管理</h3>
+          <p class="text-sm text-gray-600 leading-relaxed mb-4">
+            Trello はカンバン方式（看板方式）に基づいた視覚的なタスク管理が可能なサービスです。一つの画面（ボード）上にリストを横に並べ、カードと呼ばれる単位でタスクを管理します。研究や業務において大小様々なタスクが発生しますが、それらを見える化し整理することで、「今何をすべきか」が把握しやすくなります。
+          </p>
+
+          <div class="info-box mb-4">
+            <p class="text-xs font-bold text-gray-700 mb-2">タスクの定義と粒度の考え方</p>
+            <p class="text-sm text-gray-600 mb-2">効果的なタスク管理の第一歩は、<strong class="text-gray-800">タスクの定義</strong>を明確にすることです。一つ一つのタスクの粒度（大きさや範囲）を適切に設定することが重要です。</p>
+            <p class="text-sm text-gray-600">例えば「論文を書く」という漠然とした項目では大きすぎて進捗を管理しにくいため、「関連文献の収集」「実験データの整理」「序論のドラフト作成」のように、<strong class="text-gray-800">数時間から数日で完了できる適切な大きさ</strong>に細分化します。逆に、あまりに小さすぎる作業（5分以内で終わるようなもの）までタスクとして管理するとリストが肥大化してしまうため、そうした細かな作業はまとめるか、その場で即処理するなどバランスを取ることが肝心です。</p>
+          </div>
+
+          <div class="info-box mb-4">
+            <p class="text-xs font-bold text-gray-700 mb-2">ボード・リスト・カードの構造と役割</p>
+            <p class="text-sm text-gray-600 mb-3">Trello における基本構造は<strong class="text-gray-800">ボード（Board）</strong>、<strong class="text-gray-800">リスト（List）</strong>、<strong class="text-gray-800">カード（Card）</strong>の三層になっています。カードにはタスクのタイトルのほか、詳細説明、締切日、担当者、チェックリスト、コメントなど様々な情報を付加できます。</p>
+
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
+              <div class="bg-white/60 rounded-xl p-3 text-center">
+                <p class="text-xs font-black text-violet-500 mb-1">Inbox</p>
+                <p class="text-[10px] text-gray-500">収集箱</p>
+              </div>
+              <div class="bg-white/60 rounded-xl p-3 text-center">
+                <p class="text-xs font-black text-violet-500 mb-1">To Do</p>
+                <p class="text-[10px] text-gray-500">次にやること</p>
+              </div>
+              <div class="bg-white/60 rounded-xl p-3 text-center">
+                <p class="text-xs font-black text-violet-500 mb-1">Doing</p>
+                <p class="text-[10px] text-gray-500">実行中</p>
+              </div>
+              <div class="bg-white/60 rounded-xl p-3 text-center">
+                <p class="text-xs font-black text-violet-500 mb-1">Done</p>
+                <p class="text-[10px] text-gray-500">完了</p>
+              </div>
+            </div>
+
+            <ul class="text-sm text-gray-600 space-y-2">
+              <li class="flex items-start gap-2"><span class="text-blue-400 mt-0.5">&#9679;</span><strong class="text-gray-700">Inbox（収集箱）</strong>：新しく発生したタスクを一時的にすべてここに集めるリスト。思いついた作業や指示された用件など、まずは忘れないようすぐにカードを追加します。</li>
+              <li class="flex items-start gap-2"><span class="text-blue-400 mt-0.5">&#9679;</span><strong class="text-gray-700">To Do（次にやること）</strong>：今後取り組む予定のタスクを置くリスト。Inbox の中から近いうちに着手すべきものを選び移します。いわば優先待機中のタスクリストです。</li>
+              <li class="flex items-start gap-2"><span class="text-blue-400 mt-0.5">&#9679;</span><strong class="text-gray-700">Doing（実行中）</strong>：現在進行中のタスクを置くリスト。今まさに取り組んでいるカードのみをここに移し、集中して完了を目指します。同時に多くのタスクを Doing に入れすぎないようにし、並行作業は可能な限り絞ることがポイントです。</li>
+              <li class="flex items-start gap-2"><span class="text-blue-400 mt-0.5">&#9679;</span><strong class="text-gray-700">Done（完了）</strong>：完了したタスクの置き場所。タスクが終了したらカードをこのリストに移動します。完了済みタスクの記録としてしばらく残しておくと、後で成果を振り返る際に役立ちます。</li>
+            </ul>
+            <p class="text-sm text-gray-600 mt-3">このような形で <strong class="text-gray-800">Inbox → To Do → Doing → Done</strong> とタスクを流していくことで、自身の抱えている作業を俯瞰でき、何が未着手で何が進行中かを一目で把握できます。定期的に未着手のタスクを見直し、長期間放置されているものは優先度を見直すか、必要に応じて削除・延期することで<strong class="text-gray-800">「タスクの積読」</strong>を防ぐ工夫も大切です。</p>
+          </div>
+
+          <div class="info-box">
+            <p class="text-xs font-bold text-gray-700 mb-2">優先順位付けの考え方（重要度・緊急度・コスト）</p>
+            <p class="text-sm text-gray-600 mb-2">タスクが一覧化できたら、<strong class="text-gray-800">優先順位付け</strong>を行って効率的に消化していきます。判断する軸として一般的なのが、<strong class="text-gray-800">重要度</strong>（そのタスクがもたらす影響の大きさ）と<strong class="text-gray-800">緊急度</strong>（期限までの差し迫り具合）です。これに加えて、タスク遂行にかかる<strong class="text-gray-800">コスト</strong>（時間や労力）も考慮しましょう。</p>
+            <div class="mt-3 space-y-1">
+              <div class="flex items-center gap-2 bg-red-50 rounded-lg px-3 py-2"><span class="w-2 h-2 rounded-full bg-red-400 flex-shrink-0"></span><span class="text-xs text-gray-600"><strong class="text-gray-700">最優先</strong>：重要度が高く緊急なもの</span></div>
+              <div class="flex items-center gap-2 bg-orange-50 rounded-lg px-3 py-2"><span class="w-2 h-2 rounded-full bg-orange-400 flex-shrink-0"></span><span class="text-xs text-gray-600"><strong class="text-gray-700">計画的に</strong>：重要度は高いが緊急ではないもの</span></div>
+              <div class="flex items-center gap-2 bg-yellow-50 rounded-lg px-3 py-2"><span class="w-2 h-2 rounded-full bg-yellow-400 flex-shrink-0"></span><span class="text-xs text-gray-600"><strong class="text-gray-700">判断が必要</strong>：緊急だが重要度が低いもの（可能なら断念・委譲）</span></div>
+              <div class="flex items-center gap-2 bg-gray-50 rounded-lg px-3 py-2"><span class="w-2 h-2 rounded-full bg-gray-300 flex-shrink-0"></span><span class="text-xs text-gray-600"><strong class="text-gray-700">後回し可</strong>：どちらも低いもの</span></div>
+            </div>
+            <p class="text-xs text-gray-500 mt-2">Trello ではカードに期限（Due Date）を設定し、ラベルを付けて「高優先度」など色分けし、ひと目で重要なタスクがわかるようにすることも可能です。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2.3 Google カレンダー -->
+    <div class="fade-in topic-card glass rounded-2xl p-6 mb-5">
+      <div class="flex items-start gap-4">
+        <div class="w-10 h-10 bg-gradient-to-br from-violet-500 to-fuchsia-500 rounded-xl flex items-center justify-center text-white text-sm font-black flex-shrink-0">2.3</div>
+        <div class="w-full">
+          <h3 class="font-bold text-gray-800 mb-2">Google カレンダーによる予定管理</h3>
+          <p class="text-sm text-gray-600 leading-relaxed mb-4">スケジュール管理は研究や仕事を円滑に進める上で不可欠なスキルです。Google カレンダーを使えば、予定のリマインド、他人との共有、デバイス間同期など便利な機能を活用できます。特に複数のプロジェクトや研究活動・私生活を両立している場合、デジタルカレンダーで一元的に予定を管理することが望ましいです。</p>
+
+          <div class="info-box mb-4">
+            <p class="text-xs font-bold text-gray-700 mb-2">予定管理の基本概念（固定予定・ブロック予定・バッファ）</p>
+            <p class="text-sm text-gray-600 mb-3">効果的な時間管理のためには、予定を性質に応じて分類するのが有効です。大きく分けて<strong class="text-gray-800">固定予定</strong>、<strong class="text-gray-800">ブロック予定</strong>、<strong class="text-gray-800">バッファ時間</strong>の三種類を意識します。</p>
+            <ul class="text-sm text-gray-600 space-y-3">
+              <li class="flex items-start gap-2"><span class="text-blue-400 mt-0.5">&#9679;</span><div><strong class="text-gray-700">固定予定</strong>：日時があらかじめ決まっている動かせない予定。授業・会議・打ち合わせ・締切日など。最優先でカレンダーに登録し、その時間帯は確実に空けておく必要があります。</div></li>
+              <li class="flex items-start gap-2"><span class="text-blue-400 mt-0.5">&#9679;</span><div><strong class="text-gray-700">ブロック予定（タイムブロッキング）</strong>：自分の裁量で時間を確保して行う作業予定。集中して取り組みたい研究作業や論文執筆、実験、資料読解などの時間をあえて予定としてカレンダー上にブロックします。固定予定以外の空き時間に何にどのくらいの時間を充てるかを計画的に割り振ることで、一日や一週間の「時間の使い方」を設計します。ブロック予定は言わば自分との約束であり、他の用事を安易に割り込ませないようにするのがコツです。</div></li>
+              <li class="flex items-start gap-2"><span class="text-blue-400 mt-0.5">&#9679;</span><div><strong class="text-gray-700">バッファ時間</strong>：予備の時間や移動・休憩のための隙間時間。予定と予定の間にあらかじめバッファ（緩衝）を入れておくことで、突発的な対応や前の予定の長引きにも柔軟に対処できます。具体的には会議と会議の間に15〜30分程度の余裕時間を入れる、長時間の作業ブロックには適宜休憩を挟む、といった形でカレンダー上に空白の時間を残します。</div></li>
+            </ul>
+          </div>
+
+          <div class="info-box mb-4">
+            <p class="text-xs font-bold text-gray-700 mb-2">タイムブロッキングによる時間設計</p>
+            <p class="text-sm text-gray-600 mb-2">タイムブロッキングとは<strong class="text-gray-800">「いつ何の作業をするか」をあらかじめカレンダー上でブロックとして確保する手法</strong>です。例えば「月曜の9時〜11時は論文検索の時間」「火曜午後は実験結果の解析」といった具合に、自分のタスクリスト上の作業項目に具体的な日時を割り当てます。</p>
+            <p class="text-sm text-gray-600 mb-2">この方法の利点は、<strong class="text-gray-800">やるべきことと時間が直結するため実行に移しやすい</strong>点です。「やらなければ」とリストを眺めるより、「この時間にこの作業をする」と決めた方が、腰を据えて集中しやすくなります。</p>
+            <p class="text-sm text-gray-600">タイムブロッキングを実践する際は、各タスクの所要時間を見積もっておくことも大事です。詰め込みすぎを防ぐために、自分の一日の集中力や体力も考慮して計画しましょう。長時間に及ぶ集中作業は適宜休憩を取り入れ、逆に細切れの雑用はまとめて一つのブロックにするなどの工夫で、生産性を高めつつ疲れにくい時間設計を目指します。</p>
+          </div>
+
+          <div class="info-box">
+            <p class="text-xs font-bold text-gray-700 mb-2">週次レビューと予定の見直し</p>
+            <p class="text-sm text-gray-600 mb-2">効果的な予定管理には、<strong class="text-gray-800">定期的なレビュー</strong>が欠かせません。おすすめは<strong class="text-gray-800">週次レビュー</strong>です。週に一度、例えば週末や週明けのタイミングで、自分のカレンダーとタスクリストを見返す時間を作りましょう。</p>
+            <p class="text-sm text-gray-600 mb-2">まず前週の予定通りに進められなかったタスクや繰り越した案件がないかを確認し、あれば原因を考えつつ今週いつ処理するか決めます。次に今後の一週間分の予定を俯瞰し、固定予定の抜け漏れがないか、優先すべきタスクのブロックが十分に確保されているかを点検します。</p>
+            <p class="text-sm text-gray-600">週次レビューの際には、Trello 等のタスク管理ツールも併せてチェックし、完了したタスクを Done に移動したり、新たに発生したタスクを Inbox へ追加したりします。計画は立てっぱなしではなく、状況の変化に応じて更新してこそ効果を発揮します。週次レビューで予定と実績のズレを修正し、次の週の行動計画をクリアにしてから新しい週を迎える習慣をつけましょう。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Trello と併用する意味 -->
+    <div class="fade-in glass rounded-2xl p-6 mb-5 border-l-4 border-pink-300">
+      <div class="flex items-center gap-3 mb-3">
+        <div class="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center text-xl">🔗</div>
+        <h3 class="font-bold text-gray-800">Trello と併用する意味</h3>
+      </div>
+      <p class="text-sm text-gray-600 leading-relaxed mb-3">Trello によるタスク管理と Google カレンダーの予定管理は、それぞれ役割が異なりますが組み合わせて使うことで相乗効果を発揮します。</p>
+      <div class="grid sm:grid-cols-2 gap-3 mb-3">
+        <div class="bg-white/50 rounded-xl p-4 text-center">
+          <p class="text-xs font-bold text-violet-500 mb-1">Trello</p>
+          <p class="text-sm text-gray-700 font-semibold">「何をやるか」を管理</p>
+        </div>
+        <div class="bg-white/50 rounded-xl p-4 text-center">
+          <p class="text-xs font-bold text-violet-500 mb-1">Google カレンダー</p>
+          <p class="text-sm text-gray-700 font-semibold">「いつやるか」を管理</p>
+        </div>
+      </div>
+      <p class="text-sm text-gray-600 leading-relaxed">どちらか片方ではなく両方を使うことで、タスクの抜け漏れ防止と実行計画の両面をカバーできます。例えば、Trello 上で重要なタスクを把握したら、それを実行する時間をカレンダーにブロック予定として確保します。こうすることで「やるべきこと」が「やる予定」に落とし込まれ、<strong class="text-gray-800">タスクが溜まる一方になるのを防ぐ</strong>ことができます。タスク管理ツールとスケジュール管理ツールを併用することで、<strong class="text-gray-800">「タスク管理の計画性」と「時間管理の実行力」</strong>を両立させることができます。大事なことは、どちらのツールにも定期的に目を通し、相互に情報を反映させながら運用することです。</p>
+    </div>
+
+    <!-- 2.4 Google ドライブ／スプレッドシート／フォーム -->
+    <div class="fade-in topic-card glass rounded-2xl p-6 mb-5">
+      <div class="flex items-start gap-4">
+        <div class="w-10 h-10 bg-gradient-to-br from-violet-500 to-fuchsia-500 rounded-xl flex items-center justify-center text-white text-sm font-black flex-shrink-0">2.4</div>
+        <div class="w-full">
+          <h3 class="font-bold text-gray-800 mb-2">Google ドライブ／スプレッドシート／フォームによる情報管理</h3>
+          <p class="text-sm text-gray-600 leading-relaxed mb-4">最後に、研究活動で取り扱う様々な情報を管理・共有するためのツール群として Google ドライブ、Google スプレッドシート、Google フォームの活用方法を紹介します。これらは Google が提供するクラウドサービスで、文書やデータの保存、共同編集、情報収集などをオンライン上で実現できます。デジタル時代の業務基盤として足非習熟しておきたいツールです。</p>
+
+          <div class="info-box mb-4">
+            <p class="text-xs font-bold text-gray-700 mb-2">Google ドライブでの資料保存と命名ルール</p>
+            <p class="text-sm text-gray-600 mb-2">Google ドライブは、ファイルをクラウド上に保存し、インターネット経由でどこからでもアクセスできるストレージサービスです。研究で扱う論文PDFや実験データ、写真、スライド資料など、様々なファイルを Google ドライブにも保管しておくことで、<strong class="text-gray-800">データの消失リスクを減らしつつ他のデバイスや共同研究者と簡単に共有</strong>できます。</p>
+            <p class="text-sm text-gray-600 mb-2">効果的に使うには、まず<strong class="text-gray-800">フォルダ構成</strong>と<strong class="text-gray-800">ファイル命名ルール</strong>を決めておくことが重要です。研究プロジェクトごとにフォルダを作成し、その中に「データ」「論文」「解析結果」「ドラフト」など用途別のサブフォルダを用意するといった階層を設計しましょう。</p>
+            <p class="text-sm text-gray-600">ファイル名には統一した命名規則を設けます。例えば<strong class="text-gray-800">日付やバージョン番号を入れる</strong>（<code>260418_experiment1_v2.csv</code> のように）、内容がわかる簡潔なキーワードを含める（<code>proposal_draft</code> や <code>survey_results</code> など）といった工夫です。誰が見ても理解できる名前を付けておけば、後で自分自身や共同研究者が迷わず目的のファイルを見つけられます。</p>
+          </div>
+
+          <div class="info-box mb-4">
+            <p class="text-xs font-bold text-gray-700 mb-2">フォルダ共有とアクセス権限の設計</p>
+            <p class="text-sm text-gray-600 mb-2">共有の際に注意したいのは<strong class="text-gray-800">アクセス権限</strong>の設定です。Google ドライブでは共有相手に対して「閲覧者（閲覧のみ可能）」「コメント可（閲覧＋コメント可能）」「編集者（編集可能）」といった権限レベルを指定できます。</p>
+            <p class="text-sm text-gray-600">例えば、生の実験データは誤って書き換えられないよう閲覧権限のみにしておき、分析用のスプレッドシートは共同編集が必要なので編集権限を与える、といった具合に使い分けます。組織外の人と共有する場合にはリンクにパスワードや期限を設定する、機密性の高い情報は共有権限を最小限に留めるなどの配慮も求められます。適切なフォルダ共有と権限管理によって、<strong class="text-gray-800">必要な人が必要な情報にアクセスできる環境</strong>を整えることが情報管理の基本です。</p>
+          </div>
+
+          <div class="info-box mb-4">
+            <p class="text-xs font-bold text-gray-700 mb-2">Google スプレッドシートによる小規模データ管理</p>
+            <p class="text-sm text-gray-600 mb-2">Google スプレッドシートは、Excel に似た表計算ツールをブラウザ上で利用できるサービスです。少人数でのデータ共有や簡易なデータ解析に非常に便利で、特に<strong class="text-gray-800">小規模データの管理</strong>に適しています。例えば研究協力者のリスト、アンケートの回答結果、実験の観察記録などをスプレッドシート上に整理しておけば、チーム全員が最新の情報をリアルタイムで閲覧・更新できます。</p>
+            <p class="text-sm text-gray-600">スプレッドシートは関数計算や簡単なグラフ作成機能も備えているため、集計や可視化が必要な場合にも役立ちます。また、Google ドライブと連携しているため、自動保存や変更履歴の追跡が可能であり、万が一誰かが誤ってデータを消してしまった場合でも過去の状態に戻すことができます。</p>
+          </div>
+
+          <div class="info-box mb-4">
+            <p class="text-xs font-bold text-gray-700 mb-2">Google フォームによる情報収集の実務活用</p>
+            <p class="text-sm text-gray-600 mb-2">Google フォームは、オンラインでアンケートフォームや調査票を作成し、回答を収集できるツールです。例えば<strong class="text-gray-800">研究協力者への情報提供依頼</strong>として、事前調査の質問票を Google フォームで作成し、対象者に URL を送って回答してもらえば、手軽にデータを集められます。イベントやミーティングの出欠確認、授業やゼミ内での簡単なアンケート、アイデア募集などにも使われています。</p>
+            <p class="text-sm text-gray-600">Google フォームの利点は、専門知識がなくても短時間でフォームを設計できることと、<strong class="text-gray-800">回答が自動で集計される</strong>ことです。質問文と回答形式（選択肢、チェックボックス、評価尺度、自由記述など）を指定するだけでフォームが完成し、回答用のリンクを配布できます。集まった回答は Google フォーム上で集計結果をグラフ表示できますし、元データは自動的に対応する Google スプレッドシートに蓄積されるため、後から詳細な分析や加工も容易です。紙でアンケートを配布して手入力で集計する手間とミスを省けるため、<strong class="text-gray-800">データ収集の効率化</strong>に大いに貢献します。</p>
+          </div>
+
+          <div class="info-box">
+            <p class="text-xs font-bold text-gray-700 mb-2">情報管理ツール活用のまとめ</p>
+            <p class="text-sm text-gray-600">Google ドライブ、スプレッドシート、フォームはいずれも<strong class="text-gray-800">情報の保存・共有・収集をスムーズにするための強力なツール</strong>です。これらを活用することで、研究に必要な資料やデータを安全に保管し、チーム内でリアルタイムに情報共有し、さらには新たな情報をスピーディに集めることが可能になります。重要なのは、ツールを導入しただけで満足するのではなく、<strong class="text-gray-800">自分たちの運用ルールを決めて継続的に使いこなす</strong>ことです。例えば「毎回データファイルは Google ドライブに保存する」「週次ミーティングの議事録はスプレッドシートで管理する」「研究参加者へのアンケートは Google フォームで実施する」といったルールをチーム内で共有し、皆がそれに従うことで効果が最大化します。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- チェックポイント -->
+  <section class="max-w-4xl mx-auto px-4 sm:px-6 mb-12">
+    <div class="fade-in glass-strong rounded-3xl p-6 sm:p-8 border-l-4 border-violet-400">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-10 h-10 bg-violet-100 rounded-xl flex items-center justify-center text-xl">📝</div>
+        <h2 class="font-bold text-lg text-gray-800">授業時間外学習（チェックポイント）</h2>
+      </div>
+      <ul class="space-y-3 text-sm text-gray-600">
+        <li class="flex items-start gap-2"><span class="w-5 h-5 bg-violet-100 rounded-full flex items-center justify-center text-violet-500 text-xs flex-shrink-0 mt-0.5">1</span><span>研究用のタスクボードを作成し、運用ルール（期限・粒度など）を決める</span></li>
+        <li class="flex items-start gap-2"><span class="w-5 h-5 bg-violet-100 rounded-full flex items-center justify-center text-violet-500 text-xs flex-shrink-0 mt-0.5">2</span><span>Drive のフォルダ設計（命名方針のたたき台）を作る</span></li>
+        <li class="flex items-start gap-2"><span class="w-5 h-5 bg-violet-100 rounded-full flex items-center justify-center text-violet-500 text-xs flex-shrink-0 mt-0.5">3</span><span><strong class="text-gray-800">自分の運用案（タスク／フォルダ設計）を言語化</strong>する</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 出席・ふりかえりフォーム -->
+  <section class="max-w-4xl mx-auto px-4 sm:px-6 mb-12" id="attendance-form">
+    <div class="fade-in rounded-3xl p-6 sm:p-8 attendance-card">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center text-xl">✋</div>
+        <h2 class="font-bold text-lg text-gray-800">出席登録・ふりかえり</h2>
+      </div>
+
+<form id="reflectionForm" onsubmit="return submitReflection(event)">
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">学籍番号 <span class="text-red-500">*</span></label>
+            <input type="text" id="studentId" required placeholder="例: 12A34567B"
+              class="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-white/70 text-sm focus:outline-none focus:ring-2 focus:ring-purple-300 focus:border-transparent transition-all">
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">名前 <span class="text-red-500">*</span></label>
+            <input type="text" id="studentName" required placeholder="例: 大阪 太郎"
+              class="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-white/70 text-sm focus:outline-none focus:ring-2 focus:ring-purple-300 focus:border-transparent transition-all">
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">メールアドレス <span class="text-red-500">*</span></label>
+            <input type="email" id="studentEmail" required placeholder="例: example@osaka-u.ac.jp"
+              class="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-white/70 text-sm focus:outline-none focus:ring-2 focus:ring-purple-300 focus:border-transparent transition-all">
+            <p class="text-xs text-gray-400 mt-1">入力内容のコピーがこのアドレスに送信されます</p>
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">ふりかえり（感想・気づき・質問など） <span class="text-red-500">*</span></label>
+            <textarea id="reflection" required rows="6" minlength="200"
+              placeholder="この回で学んだこと、気づいたこと、疑問に思ったことなどを自由に記述してください（200文字以上、生成AIを使わず自分の言葉で書いてください）"
+              class="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-white/70 text-sm focus:outline-none focus:ring-2 focus:ring-purple-300 focus:border-transparent transition-all resize-y"
+              oninput="updateCharCount()"></textarea>
+            <div class="flex justify-between mt-1">
+              <p class="text-xs text-gray-400">生成AIを使わず、自分の言葉で記述してください</p>
+              <p class="text-xs" id="charCount"><span class="text-gray-400">0</span><span class="text-gray-400"> / 200文字以上</span></p>
+            </div>
+          </div>
+        </div>
+
+        <div id="formMessage" class="mt-4 text-sm hidden rounded-xl px-4 py-3"></div>
+
+        <div class="mt-6 rounded-2xl border border-amber-200 bg-amber-50/80 px-4 py-3 text-xs text-amber-900 leading-relaxed">
+          <p class="font-semibold mb-1">⚠️ ご注意ください</p>
+          <p>授業で説明していない内容・話していない内容をふりかえりシートに記載されている場合は、授業動画を見ていない＆内省も行っていないものとして、評価はできませんのでご注意ください。</p>
+        </div>
+
+        <button type="submit" id="submitBtn"
+          class="mt-6 w-full py-3 rounded-xl bg-gradient-to-r from-purple-400 via-pink-400 to-rose-400 text-white font-bold text-sm hover:from-purple-500 hover:via-pink-500 hover:to-rose-500 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none">
+          提出する
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <footer class="max-w-4xl mx-auto px-4 sm:px-6 pb-12">
+    <div class="fade-in flex items-center justify-between">
+      <a href="1.html" class="text-sm text-gray-500 hover:text-violet-500 transition-colors">← 第1回</a>
+      <a href="../#sessions" class="text-sm text-gray-400 hover:text-violet-500 transition-colors">授業一覧</a>
+      <a href="3.html" class="text-sm text-gray-500 hover:text-violet-500 transition-colors">第3回 →</a>
+    </div>
+  </footer>
+
+  <script>
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+  </script>
+
+  <script>
+    // ★ デプロイしたGoogle Apps ScriptのURLをここに入力してください
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyeNDOLgph8I4VViQ07UMllQjXu_gowhHEB5lS6qBT8USEsGM5m87TVtv01OGFJ7k-W/exec';
+    const SESSION_NUMBER = 2;
+
+    function updateCharCount() {
+      const text = document.getElementById('reflection').value;
+      const count = text.length;
+      const countEl = document.getElementById('charCount');
+      if (count >= 200) {
+        countEl.innerHTML = '<span class="text-violet-500 font-semibold">' + count + '</span><span class="text-violet-500"> / 200文字以上 ✓</span>';
+      } else {
+        countEl.innerHTML = '<span class="text-purple-500 font-semibold">' + count + '</span><span class="text-gray-400"> / 200文字以上</span>';
+      }
+    }
+
+    function showMessage(msg, isError) {
+      const el = document.getElementById('formMessage');
+      el.textContent = msg;
+      el.className = 'mt-4 text-sm rounded-xl px-4 py-3 ' +
+        (isError ? 'bg-red-50 text-red-700 border border-red-200' : 'bg-violet-50 text-violet-600 border border-violet-200');
+      el.classList.remove('hidden');
+    }
+
+    async function submitReflection(e) {
+      e.preventDefault();
+
+      const reflection = document.getElementById('reflection').value;
+      if (reflection.length < 200) {
+        showMessage('ふりかえりは200文字以上で記入してください（現在 ' + reflection.length + ' 文字）。', true);
+        return false;
+      }
+
+      const btn = document.getElementById('submitBtn');
+      btn.disabled = true;
+      btn.textContent = '送信中...';
+
+      const payload = {
+        session: SESSION_NUMBER,
+        studentId: document.getElementById('studentId').value.trim(),
+        name: document.getElementById('studentName').value.trim(),
+        email: document.getElementById('studentEmail').value.trim(),
+        reflection: reflection
+      };
+
+      try {
+        const res = await fetch(SCRIPT_URL, {
+          method: 'POST',
+          body: JSON.stringify(payload)
+        });
+        const result = await res.json();
+        showMessage(result.message, !result.success);
+
+        if (result.success) {
+          document.getElementById('reflectionForm').reset();
+          updateCharCount();
+          btn.textContent = '提出済み';
+        } else {
+          btn.disabled = false;
+          btn.textContent = '提出する';
+        }
+      } catch (err) {
+        showMessage('通信エラーが発生しました。時間をおいて再度お試しください。', true);
+        btn.disabled = false;
+        btn.textContent = '提出する';
+      }
+
+      return false;
+    }
+  </script>
+
+</body>
+</html>
